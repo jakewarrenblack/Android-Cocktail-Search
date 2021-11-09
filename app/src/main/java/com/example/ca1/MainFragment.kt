@@ -1,11 +1,13 @@
 package com.example.ca1
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ca1.databinding.MainFragmentBinding
@@ -17,6 +19,7 @@ class MainFragment : Fragment() {
     // underscores replace with uppercase, word binding at the end
     // MainFragmentBinding is a generated class
     private lateinit var binding: MainFragmentBinding
+    private lateinit var adapter: CocktailsListAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,6 +41,13 @@ class MainFragment : Fragment() {
             addItemDecoration(divider)
 
         }
+
+        viewModel.cocktailsList.observe(viewLifecycleOwner, Observer {
+            Log.i("noteLogging", it.toString())
+            adapter = CocktailsListAdapter(it)
+            binding.recyclerView.adapter = adapter
+            binding.recyclerView.layoutManager = LinearLayoutManager(activity)
+        })
 
         return binding.root
     }
