@@ -12,7 +12,9 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ca1.databinding.MainFragmentBinding
 
-class MainFragment : Fragment() {
+class MainFragment : Fragment(),
+    // implement the ListItemListener interface from CocktailsListAdapter
+    CocktailsListAdapter.ListItemListener{
 
     private lateinit var viewModel: MainViewModel
     // add reference to binding class
@@ -44,12 +46,17 @@ class MainFragment : Fragment() {
 
         viewModel.cocktailsList.observe(viewLifecycleOwner, Observer {
             Log.i("noteLogging", it.toString())
-            adapter = CocktailsListAdapter(it)
+            // pass a reference to the fragment as the listener
+            adapter = CocktailsListAdapter(it, this@MainFragment)
             binding.recyclerView.adapter = adapter
             binding.recyclerView.layoutManager = LinearLayoutManager(activity)
         })
 
         return binding.root
+    }
+
+    override fun onItemClick(cocktailId: Int) {
+        Log.i(TAG, "onItemClick: received cocktail id $cocktailId")
     }
 
 }
