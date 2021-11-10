@@ -57,6 +57,7 @@ class MainFragment : Fragment(),
 
     override fun onItemClick(cocktailId: Int) {
         Log.i(TAG, "onItemClick: received cocktail id $cocktailId")
+        // sending data from MainFragment to ViewFragment
     }
 
 }

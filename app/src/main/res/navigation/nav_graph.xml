@@ -9,18 +9,18 @@
         android:id="@+id/mainFragment"
         android:name="com.example.ca1.MainFragment"
         android:label="main_fragment"
-        tools:layout="@layout/main_fragment" />
-    <fragment
-        android:id="@+id/viewFragment"
-        android:name="com.example.ca1.ViewFragment"
-        android:label="view_fragment"
-        tools:layout="@layout/view_fragment" >
+        tools:layout="@layout/main_fragment" >
         <action
             android:id="@+id/action_view_cocktail"
-            app:destination="@id/mainFragment" />
+            app:destination="@id/viewFragment" />
         <argument
             android:name="cocktailId"
             app:argType="integer"
             android:defaultValue="0" />
     </fragment>
+    <fragment
+        android:id="@+id/viewFragment"
+        android:name="com.example.ca1.ViewFragment"
+        android:label="view_fragment"
+        tools:layout="@layout/view_fragment" />
 </navigation>
