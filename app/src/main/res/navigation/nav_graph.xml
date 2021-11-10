@@ -18,5 +18,9 @@
         <action
             android:id="@+id/action_view_cocktail"
             app:destination="@id/mainFragment" />
+        <argument
+            android:name="cocktailId"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
 </navigation>
