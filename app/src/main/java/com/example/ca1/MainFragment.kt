@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ca1.databinding.MainFragmentBinding
@@ -58,6 +59,11 @@ class MainFragment : Fragment(),
     override fun onItemClick(cocktailId: Int) {
         Log.i(TAG, "onItemClick: received cocktail id $cocktailId")
         // sending data from MainFragment to ViewFragment
+        val action = MainFragmentDirections.actionViewCocktail(cocktailId)
+        // get a reference to the navigation host, passing in a strongly typed value (an int)
+        // means we don't have to interpret the passed data on the other side,
+        //  there's no risk of us messing it up because it's now strongly typed
+        findNavController().navigate(action)
     }
 
 }

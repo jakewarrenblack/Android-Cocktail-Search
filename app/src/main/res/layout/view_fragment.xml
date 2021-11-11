@@ -6,6 +6,7 @@
     tools:context=".ViewFragment">
 
     <TextView
+        android:id="@+id/cocktailText"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
