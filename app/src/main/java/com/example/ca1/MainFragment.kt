@@ -23,7 +23,6 @@ class MainFragment : Fragment(),
     // creating the viewModel for the MainActivity -
     // an activity (like this mainfragment.kt) must extend the ViewModel class in order to create a ViewModel
 
-    private val MainFragmentDirections: Any
     private lateinit var viewModel: MainViewModel
     // add reference to binding class
     // underscores replace with uppercase, word binding at the end
