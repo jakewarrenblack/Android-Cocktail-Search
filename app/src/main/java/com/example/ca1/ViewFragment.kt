@@ -26,8 +26,7 @@ class ViewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        // make the back icon disappear when not on the single page
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+
 
         // get a reference to the activity which owns this fragment
         (activity as AppCompatActivity).supportActionBar?.let{
@@ -50,7 +49,6 @@ class ViewFragment : Fragment() {
 
         // if the user runs a back gesture either through an actual button OR a gesture,
         // handle it by calling the custom saveAndReturn() function which will result
-        // in navigating up using the navigationController
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
             object: OnBackPressedCallback(true){
