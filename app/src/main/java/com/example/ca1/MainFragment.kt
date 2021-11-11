@@ -14,8 +14,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ca1.databinding.MainFragmentBinding
 
 class MainFragment : Fragment(),
+    // Useful article explaining MVVM, Observers and Observables, and the difference between each layer of the MVVM architecture
+    // https://dev.to/productivebot/understanding-the-flow-of-data-in-mvvm-architecture-487
+
     // implement the ListItemListener interface from CocktailsListAdapter
     CocktailsListAdapter.ListItemListener{
+
+    // creating the viewModel for the MainActivity -
+    // an activity (like this mainfragment.kt) must extend the ViewModel class in order to create a ViewModel
 
     private lateinit var viewModel: MainViewModel
     // add reference to binding class
@@ -29,6 +35,7 @@ class MainFragment : Fragment(),
         savedInstanceState: Bundle?
     ): View? {
         binding = MainFragmentBinding.inflate(inflater, container, false)
+        // It's important to obtain an instance of the viewModel during view creation
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         // now we have references to all child view components within the layout
 
@@ -45,9 +52,37 @@ class MainFragment : Fragment(),
 
         }
 
+        // So, in the MVVM architecture,
+        // the idea of the 'Observer pattern'
+        // is to facilitate the flow of data between our components (the model, the view-model, and the view),
+        // while keeping these layers separate
+
+        // Below is our Observer, which usually is a view or a view-model
+        // and our Observable class is defined in our view-model
+
+        // so in our case:
+        // this file is our view (our observer is below!!)
+        // the MainViewModel.kt is our view-model (the MutableLiveData is our **observable**)
+        // and our SampleDataProvider (will be an API in the future) is our model
+
+        // The view-model, in this way, facilitates the communications between the model and the views
+        // Similarly, Views don't communicate directly with each other.
+        // Instead, the data is passed through the view models.
+
+
+
+
         viewModel.cocktailsList.observe(viewLifecycleOwner, Observer {
             Log.i("noteLogging", it.toString())
             // pass a reference to the fragment as the listener
+
+            // I know now that our observer always uses the data in some way,
+            // even if it's just retrieving it
+
+            // I **think** the role of our observer in here is to get the data from the cocktailsList in the Observable (MainViewModel.kt)
+            // and pass it to the adapter, which **I think**, will in turn pass that data to the list view
+
+            // I need to learn more about why we use the adapter and what it does
             adapter = CocktailsListAdapter(it, this@MainFragment)
             binding.recyclerView.adapter = adapter
             binding.recyclerView.layoutManager = LinearLayoutManager(activity)
