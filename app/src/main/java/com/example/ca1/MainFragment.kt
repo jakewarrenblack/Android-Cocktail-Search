@@ -40,6 +40,8 @@ class MainFragment : Fragment(),
         // now we have references to all child view components within the layout
 
         // this codeblock allows us to reference the recyclerView binding many times
+        // getting a hold of the recyclerView defined in the main_fragment.xml layout file
+        // we then set some styling for it
         with(binding.recyclerView){
             // height of each row same regardless of contents
             setHasFixedSize(true)
@@ -85,6 +87,8 @@ class MainFragment : Fragment(),
             // I need to learn more about why we use the adapter and what it does
             adapter = CocktailsListAdapter(it, this@MainFragment)
             binding.recyclerView.adapter = adapter
+            // The layoutManager defines what our recyclerView is going to look like
+            // so in this case, just a normal vertical list of tiles
             binding.recyclerView.layoutManager = LinearLayoutManager(activity)
         })
 
