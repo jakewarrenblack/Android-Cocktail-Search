@@ -30,4 +30,8 @@ interface CocktailDao{
     @Query("SELECT * FROM cocktails WHERE id = :id")
     // it will return a CocktailEntity object, which may be null - hence the question mark
     fun getCocktailById(id: Int):CocktailEntity?
+
+    // See how many cocktails there are
+    @Query("SELECT COUNT(*) FROM cocktails")
+    fun getCount(): Int
 }
