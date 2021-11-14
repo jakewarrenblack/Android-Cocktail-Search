@@ -12,14 +12,11 @@ class SampleDataProvider {
             Fusce maximus sagittis dolor in tempor. Duis vehicula congue lectus eu lobortis. Integer placerat fermentum sapien, vel feugiat sapien pellentesque non. Integer nec nibh sit amet ex lacinia pretium sed et eros. Nam id consequat erat, eleifend mollis quam. In dictum lobortis quam vel tincidunt. Vestibulum non lobortis neque. Phasellus pharetra malesuada mauris eget blandit. Sed ornare nisl id nisl tristique placerat.
         """.trimIndent()
 
-        private fun getDate(diff: Long): Date {
-            return Date(Date().time + diff)
-        }
 
         fun getCocktails() = arrayListOf(
-            CocktailEntity(1,getDate(0), sampleText1),
-            CocktailEntity(2,getDate(1), sampleText2),
-            CocktailEntity(3,getDate(3), sampleText3)
+            CocktailEntity(1, sampleText1),
+            CocktailEntity(2, sampleText2),
+            CocktailEntity(3, sampleText3)
         )
 
     }

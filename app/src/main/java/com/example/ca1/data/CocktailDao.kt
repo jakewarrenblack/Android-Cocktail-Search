@@ -21,7 +21,9 @@ interface CocktailDao{
 
     // this creates an observer to observe the Db
     // and automatically update the UI on change
-    @Query("SELECT * FROM cocktails ORDER BY date ASC")
+
+    // ** cocktails won't actually have dates, I will change this in the future ** //
+    @Query("SELECT * FROM cocktails ORDER BY id ASC")
     fun getAll(): LiveData<CocktailEntity>
 
     // we declare id as a param with a colon, like in PHP

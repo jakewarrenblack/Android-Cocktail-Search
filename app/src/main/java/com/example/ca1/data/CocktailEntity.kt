@@ -11,11 +11,10 @@ import java.util.*
 data class CocktailEntity (
     @PrimaryKey(autoGenerate = true)
     var id:Int,
-    var date: Date,
     var text: String
 
 ) {
     // using this constructor when we don't yet know the ID, it's calling the primary constructor
-    constructor() : this(NEW_COCKTAIL_ID, Date(), "")
-    constructor(date: Date, text: String) : this(NEW_COCKTAIL_ID, date, text)
+    constructor() : this(NEW_COCKTAIL_ID, "")
+    constructor(text: String) : this(NEW_COCKTAIL_ID, text)
 }
