@@ -5,7 +5,7 @@ import java.util.*
 
 data class CocktailEntity (
     var id:Int,
-    var text: String,
+    var text: String
 
 ) {
     constructor() : this(NEW_COCKTAIL_ID, "")

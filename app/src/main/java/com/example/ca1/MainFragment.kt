@@ -79,7 +79,7 @@ class MainFragment : Fragment(),
 
 
 
-        viewModel.cocktailsList.observe(viewLifecycleOwner, Observer {
+        viewModel.cocktails.observe(viewLifecycleOwner, Observer {
             Log.i("noteLogging", it.toString())
             // pass a reference to the fragment as the listener
 
