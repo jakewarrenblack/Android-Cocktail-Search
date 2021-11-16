@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ca1.databinding.MainFragmentBinding
@@ -30,11 +31,19 @@ class MainFragment : Fragment(),
     // MainFragmentBinding is a generated class
     private lateinit var binding: MainFragmentBinding
     private lateinit var adapter: CocktailsListAdapter
+    private val args: MainFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+
+        val searchQuery = args.searchQuery;
+
+        if(searchQuery != "None"){
+            Log.i("SEARCH PASSED", searchQuery)
+        }
 
         // make the back icon disappear when not on the single page
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)

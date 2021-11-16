@@ -20,6 +20,11 @@
         android:name="com.example.ca1.MainFragment"
         android:label="main_fragment"
         tools:layout="@layout/main_fragment" >
+        <argument
+            android:name="searchQuery"
+            app:argType="string"
+            android:defaultValue="None" />
+
         <action
             android:id="@+id/action_view_cocktail"
             app:destination="@id/viewFragment" />
