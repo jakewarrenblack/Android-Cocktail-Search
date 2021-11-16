@@ -5,11 +5,35 @@
     android:layout_height="match_parent"
     tools:context=".ViewFragment">
 
-    <TextView
-        android:id="@+id/cocktailText"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        tools:text="Hello" />
+        android:paddingHorizontal="5dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/cocktailText"
+            android:layout_marginTop="10dp"
+            android:textStyle="bold"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            tools:text="Hello" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="40dp" />
+
+        <TextView
+            android:id="@+id/cocktailInstructions"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            tools:text="Hello" />
+
+
+    </LinearLayout>
+
+
 
 </androidx.core.widget.NestedScrollView>

@@ -23,5 +23,13 @@
             android:name="cocktailId"
             app:argType="integer"
             android:defaultValue="0" />
+        <argument
+            android:name="cocktailInstructions"
+            app:argType="string"
+            android:defaultValue="None" />
+        <argument
+            android:name="cocktailName"
+            app:argType="string"
+            android:defaultValue="None" />
     </fragment>
 </navigation>

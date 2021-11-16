@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.ca1.api.RetrofitInstance
 import com.example.ca1.data.CocktailEntity
 import com.example.ca1.data.SampleDataProvider
+import com.example.ca1.model.Cocktail
 import kotlinx.coroutines.launch
 
 // https://www.geeksforgeeks.org/viewmodel-in-android-architecture-components/
@@ -21,9 +22,9 @@ class MainViewModel : ViewModel() {
     // this implies we may want to edit the MutableLiveData from the activity,
     // it can be changed at runtime
     // the underscore represents a private variable, it is only accessible to this MainViewModel.kt
-    private val _cocktails: MutableLiveData<List<CocktailEntity>> = MutableLiveData()
+    private val _cocktails: MutableLiveData<List<Cocktail>> = MutableLiveData()
 
-    val cocktails: LiveData<List<CocktailEntity>>
+    val cocktails: LiveData<List<Cocktail>>
         get() = _cocktails
 
     private val _isLoading = MutableLiveData(false)
@@ -48,7 +49,7 @@ class MainViewModel : ViewModel() {
         // so we make one:
         viewModelScope.launch {
             _isLoading.value = true
-            val fetchedCocktails = RetrofitInstance.api.getCocktails()
+            val fetchedCocktails = RetrofitInstance.api.getCocktails().drinks
             Log.i(TAG, "Fetched cocktails: $fetchedCocktails")
             _cocktails.value = fetchedCocktails
             _isLoading.value = false

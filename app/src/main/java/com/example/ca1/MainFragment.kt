@@ -100,10 +100,10 @@ class MainFragment : Fragment(),
         return binding.root
     }
 
-    override fun onItemClick(cocktailId: Int) {
+    override fun onItemClick(cocktailId: Int, cocktailInstructions: String, cocktailName: String) {
         Log.i(TAG, "onItemClick: received cocktail id $cocktailId")
         // sending data from MainFragment to ViewFragment
-        val action = MainFragmentDirections.actionViewCocktail(cocktailId)
+        val action = MainFragmentDirections.actionViewCocktail(cocktailId, cocktailInstructions, cocktailName)
         // get a reference to the navigation host, passing in a strongly typed value (an int)
         // means we don't have to interpret the passed data on the other side,
         //  there's no risk of us messing it up because it's now strongly typed

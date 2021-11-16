@@ -44,7 +44,9 @@ class ViewFragment : Fragment() {
         // use this binding to update the TextView
         // set the text of the cocktail's TextView
         // a string literal like in JavaScript
-        binding.cocktailText.setText("You selected cocktail number ${args.cocktailId}")
+        binding.cocktailText.setText("${args.cocktailName}")
+
+        binding.cocktailInstructions.setText("${args.cocktailInstructions}")
         // this file uses the view_fragment.xml as its layout file
 
         // if the user runs a back gesture either through an actual button OR a gesture,
