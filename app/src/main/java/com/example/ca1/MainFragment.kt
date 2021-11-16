@@ -26,6 +26,7 @@ class MainFragment : Fragment(),
     // an activity (like this mainfragment.kt) must extend the ViewModel class in order to create a ViewModel
 
     private lateinit var viewModel: MainViewModel
+    private lateinit var searchQuery: String
     // add reference to binding class
     // underscores replace with uppercase, word binding at the end
     // MainFragmentBinding is a generated class
@@ -33,13 +34,20 @@ class MainFragment : Fragment(),
     private lateinit var adapter: CocktailsListAdapter
     private val args: MainFragmentArgs by navArgs()
 
+    private lateinit var searchViewModel: SearchViewModel
+
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
 
-        val searchQuery = args.searchQuery;
+        // Getting our search query from the search page
+        searchQuery = args.searchQuery;
+
+
 
         if(searchQuery != "None"){
             Log.i("SEARCH PASSED", searchQuery)
@@ -49,8 +57,12 @@ class MainFragment : Fragment(),
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
         binding = MainFragmentBinding.inflate(inflater, container, false)
+
+
         // It's important to obtain an instance of the viewModel during view creation
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+
+        viewModel.searchQuery = searchQuery;
         // now we have references to all child view components within the layout
 
         // this codeblock allows us to reference the recyclerView binding many times
@@ -86,25 +98,30 @@ class MainFragment : Fragment(),
         // Instead, the data is passed through the view models.
 
 
+// *******************************
+    // This could be completely wrong, I don't know
+// *******************************
 
+// Trying to observe the cocktails from the searchViewModel instead of the mainViewModel
 
-        viewModel.cocktails.observe(viewLifecycleOwner, Observer {
-            Log.i("noteLogging", it.toString())
-            // pass a reference to the fragment as the listener
+//        viewModel.cocktails.observe(viewLifecycleOwner, Observer {
+//            Log.i("noteLogging", it.toString())
+//            // pass a reference to the fragment as the listener
+//
+//            // I know now that our observer always uses the data in some way,
+//            // even if it's just retrieving it
+//
+//            // I **think** the role of our observer in here is to get the data from the cocktailsList in the Observable (MainViewModel.kt)
+//            // and pass it to the adapter, which **I think**, will in turn pass that data to the list view
+//
+//            // I need to learn more about why we use the adapter and what it does
+//            adapter = CocktailsListAdapter(it, this@MainFragment)
+//            binding.recyclerView.adapter = adapter
+//            // The layoutManager defines what our recyclerView is going to look like
+//            // so in this case, just a normal vertical list of tiles
+//            binding.recyclerView.layoutManager = LinearLayoutManager(activity)
+//        })
 
-            // I know now that our observer always uses the data in some way,
-            // even if it's just retrieving it
-
-            // I **think** the role of our observer in here is to get the data from the cocktailsList in the Observable (MainViewModel.kt)
-            // and pass it to the adapter, which **I think**, will in turn pass that data to the list view
-
-            // I need to learn more about why we use the adapter and what it does
-            adapter = CocktailsListAdapter(it, this@MainFragment)
-            binding.recyclerView.adapter = adapter
-            // The layoutManager defines what our recyclerView is going to look like
-            // so in this case, just a normal vertical list of tiles
-            binding.recyclerView.layoutManager = LinearLayoutManager(activity)
-        })
 
         return binding.root
     }

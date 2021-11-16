@@ -17,6 +17,15 @@ import kotlinx.coroutines.launch
 // all the UI data is stored in the ViewModel rather than in the activity
 // **separation of concerns**
 class MainViewModel : ViewModel() {
+
+    //lateinit var searchQuery: String;
+
+
+
+    var searchQuery: String = ""
+        get() = field                     // getter
+        set(value) { field = value }      // setter
+
     // we don't expose live data directly to the activity in the MVVM model
     // we use MutableLiveData as a wrapper for our live data
     // this implies we may want to edit the MutableLiveData from the activity,
@@ -31,6 +40,8 @@ class MainViewModel : ViewModel() {
     val isLoading: LiveData<Boolean>
         get() = _isLoading
 
+    //val fragmentRef = MainFragment.searchQuery;
+
 
     init {
         // when the MainViewModel is initialised, set the value of our
@@ -41,15 +52,15 @@ class MainViewModel : ViewModel() {
         //cocktailsList.value = SampleDataProvider.getCocktails()
 
         // this data will be shared with the UI
-        getCocktails()
+        getCocktails(searchQuery)
     }
 
-    private fun getCocktails(){
+    private fun getCocktails(searchQuery: String){
         // a coroutine function can only be called from a coroutine,
         // so we make one:
         viewModelScope.launch {
             _isLoading.value = true
-            val fetchedCocktails = RetrofitInstance.api.getCocktails().drinks
+            val fetchedCocktails = RetrofitInstance.api.getCocktails(searchQuery).drinks
             Log.i(TAG, "Fetched cocktails: $fetchedCocktails")
             _cocktails.value = fetchedCocktails
             _isLoading.value = false

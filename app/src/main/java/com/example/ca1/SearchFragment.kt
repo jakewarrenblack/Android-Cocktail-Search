@@ -45,6 +45,11 @@ class SearchFragment : Fragment() {
                 // get a reference to the navigation host, passing in a strongly typed value (an int)
                 // means we don't have to interpret the passed data on the other side,
                 //  there's no risk of us messing it up because it's now strongly typed
+
+//                viewModel.searchQuery = p0.toString()
+
+                viewModel.getCocktails(p0.toString())
+
                 findNavController().navigate(action)
 
 
@@ -63,6 +68,7 @@ class SearchFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
+
     }
 
 }
