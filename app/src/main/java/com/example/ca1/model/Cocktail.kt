@@ -5,5 +5,6 @@ package com.example.ca1.model
 data class Cocktail(
     val idDrink: Int,
     val strDrink: String,
-    val strInstructions: String
+    val strInstructions: String,
+    val image: String
 )

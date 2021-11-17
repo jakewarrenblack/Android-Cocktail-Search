@@ -5,9 +5,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -57,7 +59,6 @@ class MainFragment : Fragment(),
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
         binding = MainFragmentBinding.inflate(inflater, container, false)
-
 
         // It's important to obtain an instance of the viewModel during view creation
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)

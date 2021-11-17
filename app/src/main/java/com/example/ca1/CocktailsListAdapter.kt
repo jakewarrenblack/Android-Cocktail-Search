@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ca1.databinding.ListItemBinding
 import com.example.ca1.model.Cocktail
+// we use this library for parsing images
+import com.bumptech.glide.Glide
 
 class CocktailsListAdapter(
     private val cocktailsList: List<Cocktail>,
@@ -41,7 +43,9 @@ class CocktailsListAdapter(
     // So in our case, we're finding the appropriate cocktail name in the list and displaying it in the list item's TextView widget.
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val cocktail = cocktailsList[position]
+        // this 'with' block means we can refer to lots of stuff inside the binding
         with(holder.binding) {
+            Glide.with(view.context).load(property.image).centerCrop().into(imageView)
             cocktailText.text = cocktail.strDrink
             // in here we already have a reference to the binding
             // so we get a reference to the root
