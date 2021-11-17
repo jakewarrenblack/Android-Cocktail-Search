@@ -62,6 +62,12 @@ class MainFragment : Fragment(),
         // It's important to obtain an instance of the viewModel during view creation
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
+        // trying to initialise the searchViewModel
+
+        searchViewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
+
+        searchViewModel.getCocktails(searchQuery)
+
         viewModel.searchQuery = searchQuery;
         // now we have references to all child view components within the layout
 
@@ -121,6 +127,14 @@ class MainFragment : Fragment(),
 //            // so in this case, just a normal vertical list of tiles
 //            binding.recyclerView.layoutManager = LinearLayoutManager(activity)
 //        })
+
+        searchViewModel.cocktails.observe(viewLifecycleOwner, Observer{
+            Log.i("CocktailLogging:", it.toString())
+            adapter = CocktailsListAdapter(it, this@MainFragment)
+            binding.recyclerView.adapter = adapter
+            binding.recyclerView.layoutManager = LinearLayoutManager(activity)
+        })
+
 
 
         return binding.root
