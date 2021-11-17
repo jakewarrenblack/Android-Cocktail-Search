@@ -48,7 +48,7 @@ class SearchFragment : Fragment() {
 
 //                viewModel.searchQuery = p0.toString()
 
-                viewModel.getCocktails(p0.toString())
+                //viewModel.getCocktails(p0.toString())
 
                 findNavController().navigate(action)
 

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -36,6 +37,9 @@ class MainFragment : Fragment(),
     private lateinit var adapter: CocktailsListAdapter
     private val args: MainFragmentArgs by navArgs()
 
+    private lateinit var spinner: ProgressBar
+
+
     private lateinit var searchViewModel: SearchViewModel
 
 
@@ -60,8 +64,16 @@ class MainFragment : Fragment(),
 
         binding = MainFragmentBinding.inflate(inflater, container, false)
 
+        spinner = binding.progressBar1
+
         // It's important to obtain an instance of the viewModel during view creation
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+
+        // trying to initialise the searchViewModel
+
+        searchViewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
+
+        searchViewModel.getCocktails(searchQuery)
 
         viewModel.searchQuery = searchQuery;
         // now we have references to all child view components within the layout
@@ -124,8 +136,31 @@ class MainFragment : Fragment(),
 //        })
 
 
+        searchViewModel.cocktails.observe(viewLifecycleOwner, Observer{
+            if(searchViewModel.cocktails.value == null){
+                spinner.visibility = View.VISIBLE;
+            }
+            else{
+                spinner.visibility = View.GONE;
+            }
+            Log.i("CocktailLogging:", it.toString())
+            adapter = CocktailsListAdapter(it, this@MainFragment)
+            binding.recyclerView.adapter = adapter
+            binding.recyclerView.layoutManager = LinearLayoutManager(activity)
+        })
+
+
+
         return binding.root
     }
+
+//    fun toggleSpinner(){
+//        if(spinner.visibility == View.VISIBLE){
+//            spinner.visibility = View.GONE;
+//        }else{
+//            spinner.visibility = View.VISIBLE;
+//        }
+//    }
 
     override fun onItemClick(cocktailId: Int, cocktailInstructions: String, cocktailName: String) {
         Log.i(TAG, "onItemClick: received cocktail id $cocktailId")
