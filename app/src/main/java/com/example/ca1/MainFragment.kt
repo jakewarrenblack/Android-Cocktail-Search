@@ -89,7 +89,7 @@ class MainFragment : Fragment(),
                     context, LinearLayoutManager(context).orientation
             )
             // this creates a visual divider between each row
-            addItemDecoration(divider)
+            //addItemDecoration(divider)
 
         }
 

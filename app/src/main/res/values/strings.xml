@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">CA1</string>
+    <string name="app_name">Android Cocktail Search</string>
+    <string name="imageDescription">A picture of a cocktail.</string>
 </resources>

@@ -45,7 +45,7 @@ class CocktailsListAdapter(
         val cocktail = cocktailsList[position]
         // this 'with' block means we can refer to lots of stuff inside the binding
         with(holder.binding) {
-            Glide.with(view.context).load(property.image).centerCrop().into(imageView)
+            Glide.with(root).load(cocktail.strDrinkThumb).centerCrop().into(imageView)
             cocktailText.text = cocktail.strDrink
             // in here we already have a reference to the binding
             // so we get a reference to the root

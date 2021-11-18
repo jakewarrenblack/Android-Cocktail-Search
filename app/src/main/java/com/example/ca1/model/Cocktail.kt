@@ -6,5 +6,5 @@ data class Cocktail(
     val idDrink: Int,
     val strDrink: String,
     val strInstructions: String,
-    val image: String
+    val strDrinkThumb: String
 )
