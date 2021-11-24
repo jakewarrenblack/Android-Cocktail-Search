@@ -10,10 +10,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ca1.data.FavouriteEntity
 import com.example.ca1.databinding.ViewFragmentBinding
+import kotlinx.coroutines.processNextEventInCurrentThread
 
 class ViewFragment : Fragment() {
 
@@ -22,6 +25,10 @@ class ViewFragment : Fragment() {
     private val args: ViewFragmentArgs by navArgs()
     // again we use the ViewBinding library here
     private lateinit var binding: ViewFragmentBinding
+
+    // I want to observe the result of the getFavourites function in here, need a reference to it
+    private lateinit var viewViewModel: ViewViewModel
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,11 +69,25 @@ class ViewFragment : Fragment() {
             }
         )
 
+        viewViewModel = ViewModelProvider(this).get(ViewViewModel::class.java)
+
 
 
         binding.favouriteButton.setOnClickListener {
             saveFavourite();
         }
+
+        // I know I need to observe this data, still a bit confused on how exactly to do it
+        // I need to get information back from this coroutine
+        viewViewModel.currentFavourite.observe(viewLifecycleOwner, Observer{
+            // If no existing cocktail is returned from the local storage DB
+            if(viewViewModel.currentFavourite.value == null){
+                binding.hasBeenFavouritedIndicator.text = "Not saved";
+            }
+            else{
+                binding.hasBeenFavouritedIndicator.text = "Saved!"
+            }
+        })
 
             // we've already inflated the layout, so we'll just return the binding.root instead of returning the inflated layout
             return binding.root
@@ -95,8 +116,30 @@ class ViewFragment : Fragment() {
 
     // Trying to implement functionality for the 'favourite' button and Room DB
     private fun saveFavourite(){
-        Log.i("Favourite", "CLicked save favourite!")
-        viewModel.saveFavourite(FavouriteEntity(args.cocktailId, binding.cocktailInstructions.toString()))
-    }
+        Log.i("Favourite", "Clicked save favourite!")
+        //viewViewModel.currentFavourite.observe(viewLifecycleOwner, Observer{
+            // Find out if this cocktail exists in our database by observing the value from the coroutine in ViewViewModel
+            if(viewViewModel.currentFavourite.value != null){
+                Log.i("Favourite", "Cocktail already exists, unsaving")
+                // remove favourite - still passing the entity but ultimately only using its ID
+                viewModel.removeFavourite(
+                    FavouriteEntity(
+                        args.cocktailId,
+                        binding.cocktailInstructions.toString()
+                    )
+                )
+            }
+            else{
+                Log.i("Favourite", "Cocktail does not already exist, saving")
+                // If this cocktailId does not already correspond with an existing favourite
+                viewModel.saveFavourite(
+                    FavouriteEntity(
+                        args.cocktailId,
+                        binding.cocktailInstructions.toString()
+                    )
+                )
+            }
 
+        //})
+    }
 }

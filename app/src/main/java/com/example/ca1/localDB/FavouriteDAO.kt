@@ -17,4 +17,9 @@ interface FavouriteDao {
     @Query("SELECT * FROM favourites WHERE id = :id")
     // Use ? as the object may be null - i.e. now entry in the DB for that id.
     fun getFavouriteById(id: Int): FavouriteEntity?
+
+
+    @Query("DELETE FROM favourites WHERE id = :id")
+    fun removeFavourite(id: Int)
+
 }

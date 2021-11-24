@@ -136,6 +136,7 @@ class MainFragment : Fragment(),
 //        })
 
 
+        // The cocktails in here could do with being moved back into the ViewViewModel I think?
         searchViewModel.cocktails.observe(viewLifecycleOwner, Observer{
             if(searchViewModel.cocktails.value == null){
                 spinner.visibility = View.VISIBLE;

@@ -49,9 +49,9 @@
         <ToggleButton
             android:id="@+id/favouriteToggle"
             android:layout_width="73dp"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:text="ToggleButton"
-            android:textOff="Not saved"
+            android:textOff="Saved!"
             android:textOn="Saved"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
