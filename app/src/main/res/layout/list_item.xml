@@ -34,7 +34,7 @@
 
         <TextView
             android:id="@+id/cocktailText"
-            android:layout_width="0dp"
+            android:layout_width="152dp"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
             android:fontFamily="sans-serif"
@@ -44,6 +44,18 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ToggleButton
+            android:id="@+id/favouriteToggle"
+            android:layout_width="73dp"
+            android:layout_height="48dp"
+            android:text="ToggleButton"
+            android:textOff="Not saved"
+            android:textOn="Saved"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/cocktailText"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -44,6 +44,13 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             tools:text="Hello" />
 
+        <Button
+            android:id="@+id/favouriteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Favourite"
+            />
+
 
     </LinearLayout>
 

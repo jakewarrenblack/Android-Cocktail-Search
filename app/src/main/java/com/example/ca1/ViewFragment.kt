@@ -2,6 +2,7 @@ package com.example.ca1
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -11,6 +12,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.example.ca1.data.FavouriteEntity
 import com.example.ca1.databinding.ViewFragmentBinding
 
 class ViewFragment : Fragment() {
@@ -60,9 +62,15 @@ class ViewFragment : Fragment() {
             }
         )
 
-        // we've already inflated the layout, so we'll just return the binding.root instead of returning the inflated layout
-        return binding.root
-    }
+
+
+        binding.favouriteButton.setOnClickListener {
+            saveFavourite();
+        }
+
+            // we've already inflated the layout, so we'll just return the binding.root instead of returning the inflated layout
+            return binding.root
+        }
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean{
@@ -80,7 +88,15 @@ class ViewFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(ViewViewModel::class.java)
+        // tell the viewModel to get access the local database to see if there are favourite comments for the current plant
+        viewModel.getFavourite(args.cocktailId)
 
+    }
+
+    // Trying to implement functionality for the 'favourite' button and Room DB
+    private fun saveFavourite(){
+        Log.i("Favourite", "CLicked save favourite!")
+        viewModel.saveFavourite(FavouriteEntity(args.cocktailId, binding.cocktailInstructions.toString()))
     }
 
 }
