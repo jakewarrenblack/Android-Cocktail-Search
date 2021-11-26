@@ -55,6 +55,15 @@ class CocktailsListAdapter(
                 // and this is the unique ID for that piece of data
                 listener.onItemClick(cocktail.idDrink, cocktail.strInstructions, cocktail.strDrink)
             }
+
+            favouriteToggle.setOnClickListener{
+                if(favouriteToggle.isChecked){
+                    favouriteToggle.setBackgroundResource(R.drawable.heart_solid)
+                }
+                else{
+                    favouriteToggle.setBackgroundResource(R.drawable.heart_outline)
+                }
+            }
         }
     }
 

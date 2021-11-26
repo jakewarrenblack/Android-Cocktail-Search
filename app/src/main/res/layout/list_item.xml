@@ -10,8 +10,6 @@
     card_view:cardUseCompatPadding="true"
     card_view:cardBackgroundColor="@color/offWhite"
     card_view:cardCornerRadius="4dp"
-    android:clickable="true"
-    android:focusable="true"
     android:layout_height="wrap_content"
     android:layout_width="match_parent">
 
@@ -48,11 +46,11 @@
 
         <ToggleButton
             android:id="@+id/favouriteToggle"
-            android:layout_width="73dp"
-            android:layout_height="wrap_content"
-            android:text="ToggleButton"
-            android:textOff="Saved!"
-            android:textOn="Saved"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:textOff=""
+            android:textOn=""
+            android:background="@drawable/selector"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/cocktailText"
