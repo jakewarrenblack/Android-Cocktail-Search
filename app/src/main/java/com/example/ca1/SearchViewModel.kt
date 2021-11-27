@@ -27,27 +27,27 @@ class SearchViewModel : ViewModel() {
     // the intention is to be able to search for a cocktail and have the api actually search for your search term,
     // ------------------------------------------------------- //
 
-    val _cocktails: MutableLiveData<List<Cocktail>> = MutableLiveData()
-
-    val cocktails: LiveData<List<Cocktail>>
-        get() = _cocktails
-
-    private val _isLoading = MutableLiveData(false)
-
-    val isLoading: LiveData<Boolean>
-        get() = _isLoading
-
-
-
-    fun getCocktails(searchQuery: String){
-        // a coroutine function can only be called from a coroutine,
-        // so we make one:
-        viewModelScope.launch {
-            val fetchedCocktails = RetrofitInstance.api.getCocktails(searchQuery).drinks
-            Log.i(TAG, "Fetched cocktails: $fetchedCocktails")
-            _cocktails.value = fetchedCocktails
-            _isLoading.value = false
-        }
-    }
+//    val _cocktails: MutableLiveData<List<Cocktail>> = MutableLiveData()
+//
+//    val cocktails: LiveData<List<Cocktail>>
+//        get() = _cocktails
+//
+//    private val _isLoading = MutableLiveData(false)
+//
+//    val isLoading: LiveData<Boolean>
+//        get() = _isLoading
+//
+//
+//
+//    fun getCocktails(searchQuery: String){
+//        // a coroutine function can only be called from a coroutine,
+//        // so we make one:
+//        viewModelScope.launch {
+//            val fetchedCocktails = RetrofitInstance.api.getCocktails(searchQuery).drinks
+//            Log.i(TAG, "Fetched cocktails: $fetchedCocktails")
+//            _cocktails.value = fetchedCocktails
+//            _isLoading.value = false
+//        }
+//    }
 
 }

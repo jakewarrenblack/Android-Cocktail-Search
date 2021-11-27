@@ -22,4 +22,7 @@ interface FavouriteDao {
     @Query("DELETE FROM favourites WHERE id = :id")
     fun removeFavourite(id: Int)
 
+    @Query("SELECT * FROM favourites")
+    suspend fun getAll(): List<FavouriteEntity>
+
 }

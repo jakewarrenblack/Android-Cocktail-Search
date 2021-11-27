@@ -16,7 +16,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.ca1.data.FavouriteEntity
+import com.example.ca1.data.MergedData
 import com.example.ca1.databinding.MainFragmentBinding
+import com.example.ca1.model.Cocktail
 
 class MainFragment : Fragment(),
     // Useful article explaining MVVM, Observers and Observables, and the difference between each layer of the MVVM architecture
@@ -40,7 +43,9 @@ class MainFragment : Fragment(),
     private lateinit var spinner: ProgressBar
 
 
-    private lateinit var searchViewModel: SearchViewModel
+    //private lateinit var searchViewModel: SearchViewModel
+
+
 
 
 
@@ -68,14 +73,24 @@ class MainFragment : Fragment(),
 
         // It's important to obtain an instance of the viewModel during view creation
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        val liveData = viewModel.fetchData()
+        viewModel.getCocktails(searchQuery)
+
+
+        var cocktailItems: List<Cocktail>? = null
+        var favouriteItems: List<FavouriteEntity>? = null
 
         // trying to initialise the searchViewModel
 
-        searchViewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
+        //searchViewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
 
-        searchViewModel.getCocktails(searchQuery)
+        //searchViewModel.getCocktails(searchQuery)
 
-        viewModel.searchQuery = searchQuery;
+//        viewModel.searchQuery = searchQuery;
+
+        //viewModel.getCocktails(searchQuery)
+
+
         // now we have references to all child view components within the layout
 
         // this codeblock allows us to reference the recyclerView binding many times
@@ -110,45 +125,42 @@ class MainFragment : Fragment(),
         // Similarly, Views don't communicate directly with each other.
         // Instead, the data is passed through the view models.
 
-
-// *******************************
-    // This could be completely wrong, I don't know
-// *******************************
-
-// Trying to observe the cocktails from the searchViewModel instead of the mainViewModel
-
-//        viewModel.cocktails.observe(viewLifecycleOwner, Observer {
-//            Log.i("noteLogging", it.toString())
-//            // pass a reference to the fragment as the listener
-//
-//            // I know now that our observer always uses the data in some way,
-//            // even if it's just retrieving it
-//
-//            // I **think** the role of our observer in here is to get the data from the cocktailsList in the Observable (MainViewModel.kt)
-//            // and pass it to the adapter, which **I think**, will in turn pass that data to the list view
-//
-//            // I need to learn more about why we use the adapter and what it does
+        // The cocktails in here could do with being moved back into the ViewViewModel I think?
+//        searchViewModel.cocktails.observe(viewLifecycleOwner, Observer{
+//            if(searchViewModel.cocktails.value == null){
+//                spinner.visibility = View.VISIBLE;
+//            }
+//            else{
+//                spinner.visibility = View.GONE;
+//            }
+//            Log.i("CocktailLogging:", it.toString())
 //            adapter = CocktailsListAdapter(it, this@MainFragment)
 //            binding.recyclerView.adapter = adapter
-//            // The layoutManager defines what our recyclerView is going to look like
-//            // so in this case, just a normal vertical list of tiles
 //            binding.recyclerView.layoutManager = LinearLayoutManager(activity)
 //        })
+//
+        liveData.observe(viewLifecycleOwner,
+            { it ->
+                if(it == null){
+                    spinner.visibility = View.VISIBLE;
+                } else{
+                    spinner.visibility = View.GONE;
+                }
 
+                when(it){
+                    is MergedData.CocktailData -> cocktailItems = it.cocktailItems
+                    is MergedData.FavouriteData -> favouriteItems = it.favouriteItems
+                }
 
-        // The cocktails in here could do with being moved back into the ViewViewModel I think?
-        searchViewModel.cocktails.observe(viewLifecycleOwner, Observer{
-            if(searchViewModel.cocktails.value == null){
-                spinner.visibility = View.VISIBLE;
-            }
-            else{
-                spinner.visibility = View.GONE;
-            }
-            Log.i("CocktailLogging:", it.toString())
-            adapter = CocktailsListAdapter(it, this@MainFragment)
-            binding.recyclerView.adapter = adapter
-            binding.recyclerView.layoutManager = LinearLayoutManager(activity)
-        })
+                if (cocktailItems != null && favouriteItems != null) {
+                    Log.i("CocktailLogging:", it.toString())
+                    adapter = CocktailsListAdapter(cocktailItems,favouriteItems, this@MainFragment)
+                    binding.recyclerView.adapter = adapter
+                    binding.recyclerView.layoutManager = LinearLayoutManager(activity)
+                    //                    liveData.removeObserver(this)
+                    //                    liveData.removeObserver(this)
+                }
+            })
 
 
 
@@ -171,6 +183,33 @@ class MainFragment : Fragment(),
         // means we don't have to interpret the passed data on the other side,
         //  there's no risk of us messing it up because it's now strongly typed
         findNavController().navigate(action)
+    }
+
+    override fun onSaveClick(favourite: FavouriteEntity, cocktail: Cocktail, isFavourite: Boolean) {
+        viewModel.favourites.observe(viewLifecycleOwner, Observer {
+            with(it){
+                // If favourite already exists in the list of favourites
+                if (it.contains(favourite)) {
+                    // remove favourite - still passing the entity but ultimately only using its ID
+                    viewModel.removeFavourite(
+                        favourite
+                    )
+                    adapter.notifyDataSetChanged();
+                }
+                else{
+                    // The passed favourite is null (doesn't exist in the list of favourites held by the adapter, so was never initialised)
+                    viewModel.saveFavourite(
+                        FavouriteEntity(
+                            cocktail.idDrink,
+                            cocktail.strInstructions
+                        )
+                    )
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        })
+
+
     }
 
 }

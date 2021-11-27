@@ -1,30 +1,33 @@
 package com.example.ca1
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.ca1.api.RetrofitInstance
 import com.example.ca1.data.CocktailEntity
+import com.example.ca1.data.FavouriteEntity
+import com.example.ca1.data.MergedData
 import com.example.ca1.data.SampleDataProvider
 import com.example.ca1.model.Cocktail
+import com.example.plantapp.localDB.AppDatabase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 // https://www.geeksforgeeks.org/viewmodel-in-android-architecture-components/
 // As part of the MVVM (Model, View, ViewModel) android architecture,
 // we use the ViewModel class to store and manage UI-related data
 // all the UI data is stored in the ViewModel rather than in the activity
 // **separation of concerns**
-class MainViewModel : ViewModel() {
+class MainViewModel (app: Application) : AndroidViewModel(app) {
+    private val database = AppDatabase.getInstance(app)
 
-    //lateinit var searchQuery: String;
+    val _favourites: MutableLiveData<List<FavouriteEntity>> = MutableLiveData()
 
+    val favourites: LiveData<List<FavouriteEntity>>
+        get() = _favourites
 
-
-    var searchQuery: String = ""
-        get() = field                     // getter
-        set(value) { field = value }      // setter
+    // setter
 
     // we don't expose live data directly to the activity in the MVVM model
     // we use MutableLiveData as a wrapper for our live data
@@ -32,7 +35,6 @@ class MainViewModel : ViewModel() {
     // it can be changed at runtime
     // the underscore represents a private variable, it is only accessible to this MainViewModel.kt
     private val _cocktails: MutableLiveData<List<Cocktail>> = MutableLiveData()
-
     val cocktails: LiveData<List<Cocktail>>
         get() = _cocktails
 
@@ -40,30 +42,69 @@ class MainViewModel : ViewModel() {
     val isLoading: LiveData<Boolean>
         get() = _isLoading
 
-    //val fragmentRef = MainFragment.searchQuery;
-
-
-    init {
-        // when the MainViewModel is initialised, set the value of our
-        // MutableLiveData variable to the 'LiveData' received from the
-        // SampleDataProvider. Right now this is mock data,
-        // but in the future it will be coming from an API as real live data.
-
-        //cocktailsList.value = SampleDataProvider.getCocktails()
-
-        // this data will be shared with the UI
-        getCocktails(searchQuery)
-    }
-
-    private fun getCocktails(searchQuery: String){
+    fun getCocktails(searchQuery: String){
         // a coroutine function can only be called from a coroutine,
         // so we make one:
         viewModelScope.launch {
-            _isLoading.value = true
+            withContext(Dispatchers.IO) {
+                _isLoading.postValue(true)
             val fetchedCocktails = RetrofitInstance.api.getCocktails(searchQuery).drinks
             Log.i(TAG, "Fetched cocktails: $fetchedCocktails")
-            _cocktails.value = fetchedCocktails
-            _isLoading.value = false
+            _cocktails.postValue(fetchedCocktails)
+
+
+
+                val favourite =
+                    database?.favouriteDao()?.getAll()
+
+                _favourites.postValue(favourite)
+
+//                favourite?.let {
+//                    _favourites.value = it
+//                    Log.i("Favourite", "Cocktail Returned from DB" + it[0]?.myCocktails)
+//                    //exists = true;
+//                }
+                _isLoading.postValue(false)
+            }
         }
+    }
+
+    fun saveFavourite(favouriteEntity: FavouriteEntity) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO){
+                database?.favouriteDao()?.insertFavourite(favouriteEntity)
+
+                // Not sure what I'm doing here,
+                // Trying to get the UI to update when a save is made
+                //getFavourite(favouriteEntity.id);
+            }
+        }
+    }
+
+    fun removeFavourite(favouriteEntity: FavouriteEntity) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO){
+                // Pass only an ID for this one, we're removing, not inserting an entity
+                database?.favouriteDao()?.removeFavourite(favouriteEntity.id)
+
+                //_currentFavourite.postValue(null)
+                //exists = true;
+            }
+        }
+    }
+
+    fun fetchData(): MediatorLiveData<MergedData> {
+        val liveDataMerger = MediatorLiveData<MergedData>()
+        liveDataMerger.addSource(cocktails) {
+            if (it != null) {
+                liveDataMerger.value = MergedData.CocktailData(it)
+            }
+        }
+        liveDataMerger.addSource(favourites) {
+            if (it != null) {
+                liveDataMerger.value = MergedData.FavouriteData(it)
+            }
+        }
+        return liveDataMerger
     }
 }
