@@ -81,14 +81,34 @@ class MainViewModel (app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun removeFavourite(favouriteEntity: FavouriteEntity) {
+    fun removeFavourite(id: Int) {
         viewModelScope.launch {
             withContext(Dispatchers.IO){
                 // Pass only an ID for this one, we're removing, not inserting an entity
-                database?.favouriteDao()?.removeFavourite(favouriteEntity.id)
+                database?.favouriteDao()?.removeFavourite(id)
 
                 //_currentFavourite.postValue(null)
                 //exists = true;
+            }
+        }
+    }
+
+    val _currentFavourite: MutableLiveData<FavouriteEntity> = MutableLiveData()
+
+    val currentFavourite: LiveData<FavouriteEntity>
+        get() = _currentFavourite
+
+    fun getFavourite(favouriteId: Int) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val favourite =
+                    database?.favouriteDao()?.getFavouriteById(favouriteId)
+
+                favourite?.let {
+                    _currentFavourite.postValue(it)
+                    Log.i("Favourite", "Cocktail Returned from DB" + it.myCocktails)
+                    //exists = true;
+                }
             }
         }
     }

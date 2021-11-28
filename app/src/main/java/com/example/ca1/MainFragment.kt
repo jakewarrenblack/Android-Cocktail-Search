@@ -185,16 +185,27 @@ class MainFragment : Fragment(),
         findNavController().navigate(action)
     }
 
-    override fun onSaveClick(favourite: FavouriteEntity, cocktail: Cocktail, isFavourite: Boolean) {
+    override fun onSaveClick(cocktail: Cocktail, isFavourite: Boolean) {
         viewModel.favourites.observe(viewLifecycleOwner, Observer {
             with(it){
                 // If favourite already exists in the list of favourites
-                if (it.contains(favourite)) {
+                if (isFavourite) {
                     // remove favourite - still passing the entity but ultimately only using its ID
                     viewModel.removeFavourite(
-                        favourite
+                        cocktail.idDrink
                     )
-                    adapter.notifyDataSetChanged();
+
+                    adapter.setFavourites(it)
+                    adapter.notifyDataSetChanged()
+
+
+                    //binding.recyclerView.adapter = adapter;
+                    //adapter.notifyDataSetChanged();
+
+                    //viewModel.getCocktails(searchQuery)
+
+                    //viewModel.fetchData()
+                    //adapter.notifyDataSetChanged();
                 }
                 else{
                     // The passed favourite is null (doesn't exist in the list of favourites held by the adapter, so was never initialised)
@@ -204,7 +215,16 @@ class MainFragment : Fragment(),
                             cocktail.strInstructions
                         )
                     )
-                    adapter.notifyDataSetChanged();
+
+                    adapter.setFavourites(it)
+                    adapter.notifyDataSetChanged()
+                    //adapter.notifyItemInserted(favourite)
+
+                    //binding.recyclerView.adapter = adapter;
+                    //adapter.notifyDataSetChanged();
+                    //viewModel.getCocktails(searchQuery)
+                    //viewModel.fetchData()
+                    //adapter.notifyDataSetChanged();
                 }
             }
         })

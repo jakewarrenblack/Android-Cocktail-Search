@@ -11,7 +11,7 @@ interface FavouriteDao {
 
     // this insert deals with creating by inserting and also updates by replacing them
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertFavourite(favourite: FavouriteEntity)
+    suspend fun insertFavourite(favourite: FavouriteEntity)
 
     // favourites is defined in FavouriteEntity as the table name
     @Query("SELECT * FROM favourites WHERE id = :id")
@@ -20,7 +20,7 @@ interface FavouriteDao {
 
 
     @Query("DELETE FROM favourites WHERE id = :id")
-    fun removeFavourite(id: Int)
+    suspend fun removeFavourite(id: Int)
 
     @Query("SELECT * FROM favourites")
     suspend fun getAll(): List<FavouriteEntity>

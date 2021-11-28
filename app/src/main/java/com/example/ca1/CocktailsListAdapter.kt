@@ -12,7 +12,7 @@ import com.example.ca1.data.FavouriteEntity
 
 class CocktailsListAdapter(
     private val cocktailsList: List<Cocktail>?,
-    private val favouritesList: List<FavouriteEntity?>?,
+    private var favouritesList: List<FavouriteEntity?>?,
     // this listener object is a reference to the fragment that is calling the adapter
     private val listener: ListItemListener
 ) :
@@ -21,7 +21,7 @@ class CocktailsListAdapter(
     // The ViewHolder then wraps around a View, which is managed by the RecyclerView
     // https://developer.android.com/guide/topics/ui/layout/recyclerview
     RecyclerView.Adapter<CocktailsListAdapter.ViewHolder>() {
-    lateinit var favourite: FavouriteEntity
+    var favourite: FavouriteEntity? = null
     var isFavourite: Boolean = false
     inner class ViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
@@ -52,8 +52,8 @@ class CocktailsListAdapter(
         val cocktail = cocktailsList?.get(position)
 
         if(favouritesList != null) {
-            if (favouritesList.size > position) {
-                favourite = favouritesList[position]!!
+            if (favouritesList!!.size > position) {
+                favourite = favouritesList!![position]!!
             }
         }
 
@@ -76,18 +76,21 @@ class CocktailsListAdapter(
                 }
             }
 
-            if (favouritesList != null) {
-                for(favourite in favouritesList){
+            if (favouritesList != null && favouritesList!!.isNotEmpty()) {
+                for(favourite in favouritesList!!){
                     if (favourite != null && cocktail != null) {
                             if(favourite.id == cocktail.idDrink) {
                                 favouriteToggle.setBackgroundResource(R.drawable.heart_solid)
+                            }
+                            else{
+                                favouriteToggle.setBackgroundResource(R.drawable.heart_outline)
                             }
                     }
                 }
             }
 
-            if(this@CocktailsListAdapter::favourite.isInitialized) {
-                if (cocktail?.idDrink == favourite.id) {
+            if(favourite != null) {
+                if (cocktail?.idDrink == favourite?.id) {
                     // If a cocktail has the same id as an existing favourite, it must be a favourite
                     favouriteToggle.setBackgroundResource(R.drawable.heart_solid)
                     isFavourite = true
@@ -105,13 +108,17 @@ class CocktailsListAdapter(
 //                    }
 //                }
                 if (cocktail != null) {
-                    listener.onSaveClick(favourite,cocktail, isFavourite)
+                    listener.onSaveClick(cocktail, isFavourite)
                 }
             }
 
 
 
         }
+    }
+
+    fun setFavourites(newFavourites: List<FavouriteEntity>) {
+        favouritesList = newFavourites
     }
 
     // handle a click on a list item
@@ -121,6 +128,6 @@ class CocktailsListAdapter(
     interface ListItemListener {
         // passing the current note ID
         fun onItemClick(cocktailId: Int, cocktailInstructions: String, cocktailName: String)
-        fun onSaveClick(favourite: FavouriteEntity, cocktail: Cocktail, isFavourite: Boolean)
+        fun onSaveClick(cocktail: Cocktail, isFavourite: Boolean)
     }
 }
