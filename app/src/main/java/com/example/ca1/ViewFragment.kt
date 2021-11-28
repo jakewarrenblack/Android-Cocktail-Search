@@ -29,6 +29,7 @@ class ViewFragment : Fragment() {
     // I want to observe the result of the getFavourites function in here, need a reference to it
     private lateinit var viewViewModel: ViewViewModel
 
+    private lateinit var mainViewModel: MainViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -70,6 +71,7 @@ class ViewFragment : Fragment() {
         )
 
         viewViewModel = ViewModelProvider(this).get(ViewViewModel::class.java)
+        mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
 
 
@@ -79,9 +81,9 @@ class ViewFragment : Fragment() {
 
         // I know I need to observe this data, still a bit confused on how exactly to do it
         // I need to get information back from this coroutine
-        viewViewModel.currentFavourite.observe(viewLifecycleOwner, Observer{
+        mainViewModel.currentFavourite.observe(viewLifecycleOwner, Observer{
             // If no existing cocktail is returned from the local storage DB
-            if(viewViewModel.currentFavourite.value == null){
+            if(mainViewModel.currentFavourite.value == null){
                 binding.hasBeenFavouritedIndicator.text = "Not saved";
             }
             else{
@@ -110,7 +112,7 @@ class ViewFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(ViewViewModel::class.java)
         // tell the viewModel to get access the local database to see if there are favourite comments for the current plant
-        viewModel.getFavourite(args.cocktailId)
+        mainViewModel.getFavourite(args.cocktailId)
 
     }
 
@@ -119,20 +121,17 @@ class ViewFragment : Fragment() {
         Log.i("Favourite", "Clicked save favourite!")
         //viewViewModel.currentFavourite.observe(viewLifecycleOwner, Observer{
             // Find out if this cocktail exists in our database by observing the value from the coroutine in ViewViewModel
-            if(viewViewModel.currentFavourite.value != null){
+            if(mainViewModel.currentFavourite.value != null){
                 Log.i("Favourite", "Cocktail already exists, unsaving")
                 // remove favourite - still passing the entity but ultimately only using its ID
-                viewModel.removeFavourite(
-                    FavouriteEntity(
-                        args.cocktailId,
-                        binding.cocktailInstructions.toString()
-                    )
+                mainViewModel.removeFavourite(
+                        args.cocktailId
                 )
             }
             else{
                 Log.i("Favourite", "Cocktail does not already exist, saving")
                 // If this cocktailId does not already correspond with an existing favourite
-                viewModel.saveFavourite(
+                mainViewModel.saveFavourite(
                     FavouriteEntity(
                         args.cocktailId,
                         binding.cocktailInstructions.toString()

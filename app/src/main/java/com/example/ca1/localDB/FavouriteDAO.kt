@@ -16,13 +16,13 @@ interface FavouriteDao {
     // favourites is defined in FavouriteEntity as the table name
     @Query("SELECT * FROM favourites WHERE id = :id")
     // Use ? as the object may be null - i.e. now entry in the DB for that id.
-    fun getFavouriteById(id: Int): FavouriteEntity?
+    suspend fun getFavouriteById(id: Int): FavouriteEntity?
 
 
     @Query("DELETE FROM favourites WHERE id = :id")
     suspend fun removeFavourite(id: Int)
 
     @Query("SELECT * FROM favourites")
-    suspend fun getAll(): List<FavouriteEntity>
+    suspend fun getAll(): MutableList<FavouriteEntity?>?
 
 }

@@ -12,7 +12,7 @@ import com.example.ca1.data.FavouriteEntity
 
 class CocktailsListAdapter(
     private val cocktailsList: List<Cocktail>?,
-    private var favouritesList: List<FavouriteEntity?>?,
+    private var favouritesList: MutableList<FavouriteEntity?>?,
     // this listener object is a reference to the fragment that is calling the adapter
     private val listener: ListItemListener
 ) :
@@ -49,13 +49,31 @@ class CocktailsListAdapter(
     // This method fetches the appropriate data and fills in the view holder's layout using it
     // So in our case, we're finding the appropriate cocktail name in the list and displaying it in the list item's TextView widget.
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val cocktail = cocktailsList?.get(position)
+        val cocktail = cocktailsList?.get(holder.adapterPosition)
 
-        if(favouritesList != null) {
-            if (favouritesList!!.size > position) {
-                favourite = favouritesList!![position]!!
+        if(favouritesList != null && cocktail != null){
+            favourite = getFavourite(cocktail.idDrink)
+
+            holder.binding.favouriteToggle.setOnClickListener {
+//                if(this@CocktailsListAdapter::favourite.isInitialized){
+//                    if(favouriteToggle.isChecked){
+//                        favouriteToggle.setBackgroundResource(R.drawable.heart_solid)
+//                    }
+//                    else{
+//                        favouriteToggle.setBackgroundResource(R.drawable.heart_outline)
+//                    }
+//                }
+                listener.onSaveClick(cocktail, isFavourite, favourite)
             }
         }
+
+        //val cocktail = cocktailsList?.get(position)
+
+//        if(favouritesList != null) {
+//            if (favouritesList!!.size > position) {
+//                favourite = favouritesList!![position]!!
+//            }
+//        }
 
         // this 'with' block means we can refer to lots of stuff inside the binding
         with(holder.binding) {
@@ -76,26 +94,27 @@ class CocktailsListAdapter(
                 }
             }
 
-            if (favouritesList != null && favouritesList!!.isNotEmpty()) {
-                for(favourite in favouritesList!!){
-                    if (favourite != null && cocktail != null) {
-                            if(favourite.id == cocktail.idDrink) {
-                                favouriteToggle.setBackgroundResource(R.drawable.heart_solid)
-                            }
-                            else{
-                                favouriteToggle.setBackgroundResource(R.drawable.heart_outline)
-                            }
-                    }
-                }
-            }
+//            if (favouritesList != null && favouritesList!!.isNotEmpty()) {
+//                for(favourite in favouritesList!!){
+//                    if (favourite != null && cocktail != null) {
 
-            if(favourite != null) {
-                if (cocktail?.idDrink == favourite?.id) {
-                    // If a cocktail has the same id as an existing favourite, it must be a favourite
-                    favouriteToggle.setBackgroundResource(R.drawable.heart_solid)
-                    isFavourite = true
-                }
-            }
+            // If cocktail's id matches the id of an existing favourite,
+            // set the state of the toggle to true (solid heart), otherwise false (outlined heart)
+            //favouriteToggle.isChecked = favourite?.id == cocktail?.idDrink
+            favouriteToggle.isChecked = favourite != null
+//                    }else{
+//                        favouriteToggle.setBackgroundResource(R.drawable.heart_outline)
+//                    }
+//                }
+//            }
+
+//            if(favourite != null) {
+//                if (cocktail?.idDrink == favourite?.id) {
+//                    // If a cocktail has the same id as an existing favourite, it must be a favourite
+//                    favouriteToggle.setBackgroundResource(R.drawable.heart_solid)
+//                    isFavourite = true
+//                }
+//            }
 
 
             favouriteToggle.setOnClickListener{
@@ -108,7 +127,7 @@ class CocktailsListAdapter(
 //                    }
 //                }
                 if (cocktail != null) {
-                    listener.onSaveClick(cocktail, isFavourite)
+                    listener.onSaveClick(cocktail, isFavourite, favourite)
                 }
             }
 
@@ -117,8 +136,22 @@ class CocktailsListAdapter(
         }
     }
 
-    fun setFavourites(newFavourites: List<FavouriteEntity>) {
+    fun setFavourites(newFavourites: MutableList<FavouriteEntity?>) {
         favouritesList = newFavourites
+    }
+
+    fun getFavourite(id: Int): FavouriteEntity?{
+        // Predicate filters for the matching element, where our ids are the same
+        return favouritesList?.find{ it?.id == id}
+    }
+
+    fun removeFavourite(id: Int){
+        // needs a FavouriteEntity to run a remove, so we make the getFavourite method return a FavouriteEntity
+        favouritesList?.remove(getFavourite(id))
+    }
+
+    fun addFavourite(favourite: FavouriteEntity){
+        favouritesList?.add(favourite)
     }
 
     // handle a click on a list item
@@ -126,8 +159,8 @@ class CocktailsListAdapter(
 
     // set up a relationship between the data item being clicked and the fragment in which the data is displayed
     interface ListItemListener {
-        // passing the current note ID
+        // passing the current cocktail ID
         fun onItemClick(cocktailId: Int, cocktailInstructions: String, cocktailName: String)
-        fun onSaveClick(cocktail: Cocktail, isFavourite: Boolean)
+        fun onSaveClick(cocktail: Cocktail, isFavourite: Boolean, adapterFavourite: FavouriteEntity?)
     }
 }

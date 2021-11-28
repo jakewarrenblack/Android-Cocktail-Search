@@ -22,10 +22,15 @@ import kotlinx.coroutines.withContext
 class MainViewModel (app: Application) : AndroidViewModel(app) {
     private val database = AppDatabase.getInstance(app)
 
-    val _favourites: MutableLiveData<List<FavouriteEntity>> = MutableLiveData()
+    val _favourites: MutableLiveData<MutableList<FavouriteEntity?>?> = MutableLiveData()
 
-    val favourites: LiveData<List<FavouriteEntity>>
+    val favourites: LiveData<MutableList<FavouriteEntity?>?>
         get() = _favourites
+
+    val _currentFavourite: MutableLiveData<FavouriteEntity> = MutableLiveData()
+
+    val currentFavourite: LiveData<FavouriteEntity>
+        get() = _currentFavourite
 
     // setter
 
@@ -76,7 +81,7 @@ class MainViewModel (app: Application) : AndroidViewModel(app) {
 
                 // Not sure what I'm doing here,
                 // Trying to get the UI to update when a save is made
-                //getFavourite(favouriteEntity.id);
+                _currentFavourite.postValue(favouriteEntity)
             }
         }
     }
@@ -87,16 +92,11 @@ class MainViewModel (app: Application) : AndroidViewModel(app) {
                 // Pass only an ID for this one, we're removing, not inserting an entity
                 database?.favouriteDao()?.removeFavourite(id)
 
-                //_currentFavourite.postValue(null)
+                _currentFavourite.postValue(null)
                 //exists = true;
             }
         }
     }
-
-    val _currentFavourite: MutableLiveData<FavouriteEntity> = MutableLiveData()
-
-    val currentFavourite: LiveData<FavouriteEntity>
-        get() = _currentFavourite
 
     fun getFavourite(favouriteId: Int) {
         viewModelScope.launch {
