@@ -38,7 +38,8 @@ class MainFragment : Fragment(),
     private lateinit var adapter: CocktailsListAdapter
     private val args: MainFragmentArgs by navArgs()
     private lateinit var spinner: ProgressBar
-
+    var cocktailItems: List<Cocktail>? = null
+    var favouriteItems: MutableList<FavouriteEntity?>? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -59,8 +60,7 @@ class MainFragment : Fragment(),
         viewModel.getCocktails(searchQuery)
 
 
-        var cocktailItems: List<Cocktail>? = null
-        var favouriteItems: MutableList<FavouriteEntity?>? = null
+
 
 
         // now we have references to all child view components within the layout
@@ -147,38 +147,58 @@ class MainFragment : Fragment(),
         findNavController().navigate(action)
     }
 
-    override fun onSaveClick(cocktail: Cocktail, isFavourite: Boolean, adapterFavourite: FavouriteEntity?) {
+    override fun onSaveClick(cocktail: Cocktail, isFavourite: Boolean, adapterFavouriteId: Int?, position: Int) {
         // every time you click, run getFavourite on the cocktailId of this specific list item
         // viewModel.getFavourite then sets the value of currentFavourite
-        viewModel.getFavourite(cocktail.idDrink)
+        //viewModel.getFavourite(cocktail.idDrink)
 
-        if(viewModel.currentFavourite.value != null){
-            Log.i("FavouriteExistence", "Cocktail already exists, unsaving : ${cocktail.strDrink} / adapterfavourite: $adapterFavourite")
+        if(favouriteItems?.contains(FavouriteEntity(cocktail.idDrink, cocktail.strInstructions)) == true){
+            Log.i("FavouriteExistence", "Cocktail already exists, unsaving : ${cocktail.idDrink} / adapterfavourite: $adapterFavouriteId")
+
+
+//            viewModel.removeFavourite(
+//                cocktail.idDrink
+//            )
 
             // removeFavourite runs getFavourite, so we can pass the cocktail ID even though list.remove needs a FavouriteEntity
-            adapter.removeFavourite(cocktail.idDrink)
-            viewModel.removeFavourite(
-                cocktail.idDrink
-            )
-            adapter.notifyDataSetChanged();
+            //adapter.removeFavourite(cocktail.idDrink)
+
+            //favouriteItems?.remove(FavouriteEntity(cocktail.idDrink, cocktail.strInstructions))
+
+            favouriteItems?.remove(FavouriteEntity(cocktail.idDrink, cocktail.strInstructions))
+            viewModel.removeFavourite(FavouriteEntity(cocktail.idDrink, cocktail.strInstructions))
+
+            adapter = CocktailsListAdapter(cocktailItems,favouriteItems, this@MainFragment)
+
+            //adapter.notifyItemChanged(position);
+            //adapter.notifyDataSetChanged()
 
         }
         else{
-            Log.i("FavouriteExistence", "Cocktail does not already exist, saving: ${cocktail.strDrink} / adapterfavourite: $adapterFavourite")
+            Log.i("FavouriteExistence", "Cocktail does not already exist, saving: ${cocktail.idDrink} / adapterfavourite: $adapterFavouriteId")
             // If this cocktailId does not already correspond with an existing favourite
 
-            adapter.addFavourite(FavouriteEntity(cocktail.idDrink, cocktail.strInstructions))
 
-            viewModel.saveFavourite(
-                FavouriteEntity(
-                    cocktail.idDrink,
-                    cocktail.strInstructions
-                )
-            )
+            favouriteItems?.add(FavouriteEntity(cocktail.idDrink, cocktail.strInstructions))
+            viewModel.saveFavourite(FavouriteEntity(cocktail.idDrink, cocktail.strInstructions))
+            adapter = CocktailsListAdapter(cocktailItems,favouriteItems, this@MainFragment)
+//            adapter.notifyItemChanged(position);
+//            adapter.notifyDataSetChanged()
 
-            adapter.notifyDataSetChanged();
+//            viewModel.saveFavourite(
+//                FavouriteEntity(
+//                    cocktail.idDrink,
+//                    cocktail.strInstructions
+//                )
+//            )
+
+            //adapter.addFavourite(FavouriteEntity(cocktail.idDrink, cocktail.strInstructions))
+
+            //adapter.notifyItemChanged(cocktail.idDrink);
+
+
             // The favourite has been added, get the updated list from the mainviewmodel
-            //viewModel.getFavourite(cocktail.idDrink)
+            //viewModel.getFavourite(cocktail.idDrink),.
 
 //            viewModel.currentFavourite.observe(viewLifecycleOwner, Observer{
 //                with(it){
@@ -187,7 +207,7 @@ class MainFragment : Fragment(),
 //                }
 //            })
         }
-        adapter.notifyDataSetChanged();
+        //adapter.notifyDataSetChanged();
 
     }
 

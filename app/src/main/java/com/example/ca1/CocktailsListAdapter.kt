@@ -51,20 +51,8 @@ class CocktailsListAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val cocktail = cocktailsList?.get(holder.adapterPosition)
 
-        if(favouritesList != null && cocktail != null){
+        if(!favouritesList?.isEmpty()!! && cocktail != null){
             favourite = getFavourite(cocktail.idDrink)
-
-            holder.binding.favouriteToggle.setOnClickListener {
-//                if(this@CocktailsListAdapter::favourite.isInitialized){
-//                    if(favouriteToggle.isChecked){
-//                        favouriteToggle.setBackgroundResource(R.drawable.heart_solid)
-//                    }
-//                    else{
-//                        favouriteToggle.setBackgroundResource(R.drawable.heart_outline)
-//                    }
-//                }
-                listener.onSaveClick(cocktail, isFavourite, favourite)
-            }
         }
 
         //val cocktail = cocktailsList?.get(position)
@@ -118,16 +106,16 @@ class CocktailsListAdapter(
 
 
             favouriteToggle.setOnClickListener{
-//                if(this@CocktailsListAdapter::favourite.isInitialized){
-//                    if(favouriteToggle.isChecked){
-//                        favouriteToggle.setBackgroundResource(R.drawable.heart_solid)
-//                    }
-//                    else{
-//                        favouriteToggle.setBackgroundResource(R.drawable.heart_outline)
-//                    }
-//                }
+////                if(this@CocktailsListAdapter::favourite.isInitialized){
+////                    if(favouriteToggle.isChecked){
+////                        favouriteToggle.setBackgroundResource(R.drawable.heart_solid)
+////                    }
+////                    else{
+////                        favouriteToggle.setBackgroundResource(R.drawable.heart_outline)
+////                    }
+////                }
                 if (cocktail != null) {
-                    listener.onSaveClick(cocktail, isFavourite, favourite)
+                    listener.onSaveClick(cocktail, isFavourite, favourite?.id, position)
                 }
             }
 
@@ -161,6 +149,6 @@ class CocktailsListAdapter(
     interface ListItemListener {
         // passing the current cocktail ID
         fun onItemClick(cocktailId: Int, cocktailInstructions: String, cocktailName: String)
-        fun onSaveClick(cocktail: Cocktail, isFavourite: Boolean, adapterFavourite: FavouriteEntity?)
+        fun onSaveClick(cocktail: Cocktail, isFavourite: Boolean, adapterFavouriteId: Int?, position: Int)
     }
 }

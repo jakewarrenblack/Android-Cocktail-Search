@@ -22,7 +22,11 @@ import kotlinx.coroutines.withContext
 class MainViewModel (app: Application) : AndroidViewModel(app) {
     private val database = AppDatabase.getInstance(app)
 
+
+
     val _favourites: MutableLiveData<MutableList<FavouriteEntity?>?> = MutableLiveData()
+    var tempFavourites = _favourites.value
+
 
     val favourites: LiveData<MutableList<FavouriteEntity?>?>
         get() = _favourites
@@ -75,6 +79,9 @@ class MainViewModel (app: Application) : AndroidViewModel(app) {
     }
 
     fun saveFavourite(favouriteEntity: FavouriteEntity) {
+
+
+
         viewModelScope.launch {
             withContext(Dispatchers.IO){
                 database?.favouriteDao()?.insertFavourite(favouriteEntity)
@@ -82,20 +89,32 @@ class MainViewModel (app: Application) : AndroidViewModel(app) {
                 // Not sure what I'm doing here,
                 // Trying to get the UI to update when a save is made
                 _currentFavourite.postValue(favouriteEntity)
+                tempFavourites?.add(favouriteEntity)
+                _favourites.postValue(tempFavourites)
             }
         }
+
+        //tempFavourites?.add(favouriteEntity)
+       //_favourites.value = tempFavourites
     }
 
-    fun removeFavourite(id: Int) {
+    fun removeFavourite(favouriteEntity: FavouriteEntity) {
+
+
         viewModelScope.launch {
             withContext(Dispatchers.IO){
                 // Pass only an ID for this one, we're removing, not inserting an entity
-                database?.favouriteDao()?.removeFavourite(id)
+                database?.favouriteDao()?.removeFavourite(favouriteEntity.id)
 
                 _currentFavourite.postValue(null)
+                tempFavourites?.remove(favouriteEntity)
+                _favourites.postValue(tempFavourites)
                 //exists = true;
             }
         }
+
+        //tempFavourites?.remove(favouriteEntity)
+        //_favourites.value = tempFavourites
     }
 
     fun getFavourite(favouriteId: Int) {
@@ -107,6 +126,20 @@ class MainViewModel (app: Application) : AndroidViewModel(app) {
                 favourite?.let {
                     _currentFavourite.postValue(it)
                     Log.i("Favourite", "Cocktail Returned from DB" + it.myCocktails)
+                    //exists = true;
+                }
+            }
+        }
+    }
+
+    fun getAllFavourites(){
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val favourites =
+                    database?.favouriteDao()?.getAll()
+
+                favourites?.let {
+                    _favourites.postValue(it)
                     //exists = true;
                 }
             }

@@ -125,7 +125,7 @@ class ViewFragment : Fragment() {
                 Log.i("Favourite", "Cocktail already exists, unsaving")
                 // remove favourite - still passing the entity but ultimately only using its ID
                 mainViewModel.removeFavourite(
-                        args.cocktailId
+                        FavouriteEntity(args.cocktailId, args.cocktailInstructions)
                 )
             }
             else{
