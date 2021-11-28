@@ -46,6 +46,8 @@ class SearchFragment : Fragment() {
         return binding.root
     }
 
+    // I was getting an error relating to the search being called multiple times when the MediatorLiveData's sources were added,
+    // so using this helper function to only navigate when it's safe to do so, prevents the crash whereby MainFragment is not found
     fun NavController.safeNavigate(direction: NavDirections) {
         currentDestination?.getAction(direction.actionId)?.run {
             navigate(direction)

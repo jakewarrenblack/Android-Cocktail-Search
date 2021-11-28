@@ -8,5 +8,7 @@ import androidx.room.PrimaryKey
 @Entity (tableName = "favourites")
 data class FavouriteEntity(
     @PrimaryKey val id: Int,
-    var myCocktails : String
+    val strDrink: String,
+    val strInstructions: String,
+    val strDrinkThumb: String
 )

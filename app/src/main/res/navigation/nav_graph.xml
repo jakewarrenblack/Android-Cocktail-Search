@@ -39,14 +39,24 @@
             app:argType="integer"
             android:defaultValue="0" />
         <argument
+            android:name="cocktailName"
+            app:argType="string"
+            android:defaultValue="None" />
+        <argument
             android:name="cocktailInstructions"
             app:argType="string"
             android:defaultValue="None" />
         <argument
-            android:name="cocktailName"
+            android:name="cocktailImage"
             app:argType="string"
             android:defaultValue="None" />
+
     </fragment>
+    <fragment
+        android:id="@+id/favouritesFragment"
+        android:name="com.example.ca1.FavouritesFragment"
+        android:label="favourites_fragment"
+        tools:layout="@layout/favourites_fragment" />
 
 
 </navigation>

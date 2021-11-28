@@ -21,4 +21,7 @@ interface CocktailApi {
     @GET("search.php")
     suspend fun getCocktails(@Query("s") searchQuery: String): CocktailResponse
 
+    @GET("lookup.php")
+    suspend fun getCocktailById(@Query("i") searchQuery: Int?): CocktailResponse
+
 }

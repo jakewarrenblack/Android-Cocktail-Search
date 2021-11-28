@@ -49,18 +49,13 @@ class MainFragment : Fragment(),
 
         // make the back icon disappear when not on the single page
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
-
         binding = MainFragmentBinding.inflate(inflater, container, false)
-
         spinner = binding.progressBar1
 
         // It's important to obtain an instance of the viewModel during view creation
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         val liveData = viewModel.fetchData()
         viewModel.getCocktails(searchQuery)
-
-
-
 
 
         // now we have references to all child view components within the layout
@@ -75,9 +70,6 @@ class MainFragment : Fragment(),
             val divider = DividerItemDecoration(
                     context, LinearLayoutManager(context).orientation
             )
-            // this creates a visual divider between each row
-            //addItemDecoration(divider)
-
         }
 
         // So, in the MVVM architecture,
@@ -96,21 +88,6 @@ class MainFragment : Fragment(),
         // The view-model, in this way, facilitates the communications between the model and the views
         // Similarly, Views don't communicate directly with each other.
         // Instead, the data is passed through the view models.
-
-        // The cocktails in here could do with being moved back into the ViewViewModel I think?
-//        searchViewModel.cocktails.observe(viewLifecycleOwner, Observer{
-//            if(searchViewModel.cocktails.value == null){
-//                spinner.visibility = View.VISIBLE;
-//            }
-//            else{
-//                spinner.visibility = View.GONE;
-//            }
-//            Log.i("CocktailLogging:", it.toString())
-//            adapter = CocktailsListAdapter(it, this@MainFragment)
-//            binding.recyclerView.adapter = adapter
-//            binding.recyclerView.layoutManager = LinearLayoutManager(activity)
-//        })
-//
         liveData.observe(viewLifecycleOwner,
             { it ->
                 if(it == null){
@@ -132,15 +109,12 @@ class MainFragment : Fragment(),
                     //                    liveData.removeObserver(this)
                 }
             })
-
-
-
         return binding.root
     }
-    override fun onItemClick(cocktailId: Int, cocktailInstructions: String, cocktailName: String) {
+    override fun onItemClick(cocktailId: Int, cocktailName: String, cocktailInstructions: String, cocktailImage: String) {
         Log.i(TAG, "onItemClick: received cocktail id $cocktailId")
         // sending data from MainFragment to ViewFragment
-        val action = MainFragmentDirections.actionViewCocktail(cocktailId, cocktailInstructions, cocktailName)
+        val action = MainFragmentDirections.actionViewCocktail(cocktailId, cocktailName, cocktailInstructions, cocktailImage)
         // get a reference to the navigation host, passing in a strongly typed value (an int)
         // means we don't have to interpret the passed data on the other side,
         //  there's no risk of us messing it up because it's now strongly typed
@@ -150,65 +124,24 @@ class MainFragment : Fragment(),
     override fun onSaveClick(cocktail: Cocktail, isFavourite: Boolean, adapterFavouriteId: Int?, position: Int) {
         // every time you click, run getFavourite on the cocktailId of this specific list item
         // viewModel.getFavourite then sets the value of currentFavourite
-        //viewModel.getFavourite(cocktail.idDrink)
-
-        if(favouriteItems?.contains(FavouriteEntity(cocktail.idDrink, cocktail.strInstructions)) == true){
+        if(favouriteItems?.contains(FavouriteEntity(cocktail.idDrink, cocktail.strDrink, cocktail.strInstructions, cocktail.strDrinkThumb)) == true){
             Log.i("FavouriteExistence", "Cocktail already exists, unsaving : ${cocktail.idDrink} / adapterfavourite: $adapterFavouriteId")
-
-
-//            viewModel.removeFavourite(
-//                cocktail.idDrink
-//            )
-
-            // removeFavourite runs getFavourite, so we can pass the cocktail ID even though list.remove needs a FavouriteEntity
-            //adapter.removeFavourite(cocktail.idDrink)
-
-            //favouriteItems?.remove(FavouriteEntity(cocktail.idDrink, cocktail.strInstructions))
-
-            favouriteItems?.remove(FavouriteEntity(cocktail.idDrink, cocktail.strInstructions))
-            viewModel.removeFavourite(FavouriteEntity(cocktail.idDrink, cocktail.strInstructions))
-
+            favouriteItems?.remove(FavouriteEntity(cocktail.idDrink, cocktail.strDrink, cocktail.strInstructions, cocktail.strDrinkThumb))
+            viewModel.removeFavourite(FavouriteEntity(cocktail.idDrink, cocktail.strDrink, cocktail.strInstructions, cocktail.strDrinkThumb))
             adapter = CocktailsListAdapter(cocktailItems,favouriteItems, this@MainFragment)
 
             //adapter.notifyItemChanged(position);
             //adapter.notifyDataSetChanged()
-
         }
         else{
             Log.i("FavouriteExistence", "Cocktail does not already exist, saving: ${cocktail.idDrink} / adapterfavourite: $adapterFavouriteId")
             // If this cocktailId does not already correspond with an existing favourite
-
-
-            favouriteItems?.add(FavouriteEntity(cocktail.idDrink, cocktail.strInstructions))
-            viewModel.saveFavourite(FavouriteEntity(cocktail.idDrink, cocktail.strInstructions))
+            favouriteItems?.add(FavouriteEntity(cocktail.idDrink, cocktail.strDrink, cocktail.strInstructions, cocktail.strDrinkThumb))
+            viewModel.saveFavourite(FavouriteEntity(cocktail.idDrink, cocktail.strDrink, cocktail.strInstructions, cocktail.strDrinkThumb))
             adapter = CocktailsListAdapter(cocktailItems,favouriteItems, this@MainFragment)
 //            adapter.notifyItemChanged(position);
 //            adapter.notifyDataSetChanged()
 
-//            viewModel.saveFavourite(
-//                FavouriteEntity(
-//                    cocktail.idDrink,
-//                    cocktail.strInstructions
-//                )
-//            )
-
-            //adapter.addFavourite(FavouriteEntity(cocktail.idDrink, cocktail.strInstructions))
-
-            //adapter.notifyItemChanged(cocktail.idDrink);
-
-
-            // The favourite has been added, get the updated list from the mainviewmodel
-            //viewModel.getFavourite(cocktail.idDrink),.
-
-//            viewModel.currentFavourite.observe(viewLifecycleOwner, Observer{
-//                with(it){
-//                    adapter.addFavourite(it)
-//                    adapter.notifyDataSetChanged();
-//                }
-//            })
         }
-        //adapter.notifyDataSetChanged();
-
     }
-
 }

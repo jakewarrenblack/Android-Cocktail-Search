@@ -11,7 +11,7 @@ import com.example.ca1.localDB.FavouriteDao
 // If you make changes to your Entity class and therefore need to make changes to your table easiest thing
 // to do is change the version here and uncomment .fallbackToDestructiveMigration() below.
 // This will scrap the whole database and start again.
-@Database(entities = [FavouriteEntity::class], version = 2, exportSchema = false)
+@Database(entities = [FavouriteEntity::class], version = 3, exportSchema = false)
 
 abstract class AppDatabase: RoomDatabase() {
 

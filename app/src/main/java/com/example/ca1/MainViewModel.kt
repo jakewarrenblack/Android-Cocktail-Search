@@ -125,7 +125,7 @@ class MainViewModel (app: Application) : AndroidViewModel(app) {
 
                 favourite?.let {
                     _currentFavourite.postValue(it)
-                    Log.i("Favourite", "Cocktail Returned from DB" + it.myCocktails)
+                    Log.i("Favourite", "Cocktail Returned from DB" + it.strDrink)
                     //exists = true;
                 }
             }
