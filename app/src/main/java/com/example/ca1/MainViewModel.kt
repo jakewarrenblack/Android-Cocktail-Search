@@ -152,7 +152,7 @@ class MainViewModel (app: Application) : AndroidViewModel(app) {
         return liveDataMerger
     }
 
-    fun getFullJson(searchQuery: String){
+    fun getFullJson(searchQuery: Int?){
         viewModelScope.launch {
             RetrofitInstance.api.getCocktailsJson(searchQuery).enqueue(object:
                 Callback<ResponseBody> {

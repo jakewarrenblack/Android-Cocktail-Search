@@ -50,10 +50,6 @@
             android:name="cocktailImage"
             app:argType="string"
             android:defaultValue="None" />
-        <argument
-            android:name="ingredients"
-            app:argType="string[][]"
-            android:defaultValue="None" />
 
     </fragment>
     <fragment

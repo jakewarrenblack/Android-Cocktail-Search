@@ -14,6 +14,18 @@
         android:paddingHorizontal="15dp"
         android:orientation="vertical">
 
+        <ProgressBar
+            android:id="@+id/progressBar2"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            app:layout_constraintBottom_toBottomOf="@+id/mainRecyclerView"
+            app:layout_constraintEnd_toEndOf="@+id/mainRecyclerView"
+            app:layout_constraintStart_toStartOf="@+id/mainRecyclerView"
+            app:layout_constraintTop_toTopOf="@+id/mainRecyclerView"
+            tools:ignore="MissingConstraints" />
+
         <TextView
             android:id="@+id/cocktailText"
             android:layout_marginTop="10dp"
@@ -49,6 +61,18 @@
             android:layout_height="match_parent"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             tools:text="Hello" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/ingredientsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/favouriteButton"

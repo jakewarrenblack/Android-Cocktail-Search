@@ -45,7 +45,7 @@ class FavouritesFragment : Fragment(),
 
         //val liveData = viewModel.fetchData()
 
-        with(binding.recyclerView){
+        with(binding.mainRecyclerView){
             setHasFixedSize(true)
             val divider = DividerItemDecoration(
                 context, LinearLayoutManager(context).orientation
@@ -61,8 +61,8 @@ class FavouritesFragment : Fragment(),
                     viewModel.getCocktails(favouriteItems)
 
                     adapter = FavouritesListAdapter(favouriteItems, this@FavouritesFragment)
-                    binding.recyclerView.adapter = adapter
-                    binding.recyclerView.layoutManager = LinearLayoutManager(activity)
+                    binding.mainRecyclerView.adapter = adapter
+                    binding.mainRecyclerView.layoutManager = LinearLayoutManager(activity)
 
                 }
 

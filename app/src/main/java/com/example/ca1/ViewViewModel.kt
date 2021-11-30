@@ -70,7 +70,7 @@ class ViewViewModel (app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun getFullJson(searchQuery: String){
+    fun getFullJson(searchQuery: Int?){
         viewModelScope.launch {
             RetrofitInstance.api.getCocktailsJson(searchQuery).enqueue(object:
                 Callback<ResponseBody> {

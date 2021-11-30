@@ -79,7 +79,7 @@ class CocktailsListAdapter(
             root.setOnClickListener{
                 // and this is the unique ID for that piece of data
                 if (cocktail != null) {
-                    listener.onItemClick(cocktail.idDrink, cocktail.strDrink, cocktail.strInstructions, cocktail.strDrinkThumb, cocktail.ingredients.toList().toTypedArray())
+                    listener.onItemClick(cocktail.idDrink, cocktail.strDrink, cocktail.strInstructions, cocktail.strDrinkThumb)
                 }
             }
 
@@ -149,7 +149,7 @@ class CocktailsListAdapter(
     // set up a relationship between the data item being clicked and the fragment in which the data is displayed
     interface ListItemListener {
         // passing the current cocktail ID
-        fun onItemClick(cocktailId: Int, cocktailName: String, cocktailInstructions: String, cocktailImage: String, ingredients: Array<Pair<String, String>>)
+        fun onItemClick(cocktailId: Int, cocktailName: String, cocktailInstructions: String, cocktailImage: String)
         fun onSaveClick(cocktail: Cocktail, isFavourite: Boolean, adapterFavouriteId: Int?, position: Int)
     }
 }

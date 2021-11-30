@@ -23,8 +23,8 @@ interface CocktailApi {
     suspend fun getCocktails(@Query("s") searchQuery: String): CocktailResponse
 
     // I want to get the raw json response for this one, I'll be looping through the ingredient and measure data
-    @GET("search.php")
-    fun getCocktailsJson(@Query("s") searchQuery: String): Call<ResponseBody>
+    @GET("lookup.php")
+    fun getCocktailsJson(@Query("i") searchQuery: Int?): Call<ResponseBody>
 
     @GET("lookup.php")
     suspend fun getCocktailById(@Query("i") searchQuery: Int?): CocktailResponse
