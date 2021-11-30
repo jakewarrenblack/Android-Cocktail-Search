@@ -72,9 +72,9 @@ class FavouritesFragment : Fragment(),
         return binding.root
     }
 
-    override fun onItemClick(cocktailId: Int, cocktailInstructions: String, cocktailName: String) {
+    override fun onItemClick(cocktailId: Int, cocktailInstructions: String, cocktailName: String, cocktailImage: String) {
         Log.i(TAG, "onItemClick: received cocktail id $cocktailId")
-        val action = MainFragmentDirections.actionViewCocktail(cocktailId, cocktailInstructions, cocktailName)
+        val action = FavouritesFragmentDirections.actionViewCocktail(cocktailId, cocktailInstructions, cocktailName, cocktailImage)
         findNavController().navigate(action)
     }
 

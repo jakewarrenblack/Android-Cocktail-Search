@@ -56,7 +56,13 @@
         android:id="@+id/favouritesFragment"
         android:name="com.example.ca1.FavouritesFragment"
         android:label="favourites_fragment"
-        tools:layout="@layout/favourites_fragment" />
+        tools:layout="@layout/favourites_fragment">
+
+        <action
+            android:id="@+id/action_view_cocktail"
+            app:destination="@id/viewFragment" />
+
+    </fragment>
 
 
 </navigation>

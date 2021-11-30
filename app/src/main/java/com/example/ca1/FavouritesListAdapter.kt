@@ -48,12 +48,12 @@ class FavouritesListAdapter(
 
             favouriteToggle.isChecked = favourite != null
 
-//            root.setOnClickListener{
-//                // and this is the unique ID for that piece of data
-//                if (cocktail != null) {
-//                    listener.onItemClick(cocktail.idDrink, cocktail.strInstructions, cocktail.strDrink)
-//                }
-//            }
+            root.setOnClickListener{
+                // and this is the unique ID for that piece of data
+                if (favourite != null) {
+                    listener.onItemClick(favourite.id, favourite.strDrink, favourite.strInstructions, favourite.strDrinkThumb)
+                }
+            }
 
 //            favouriteToggle.isChecked = favourite != null
 //
@@ -85,7 +85,7 @@ class FavouritesListAdapter(
 
     interface ListItemListener {
         // passing the current cocktail ID
-        fun onItemClick(cocktailId: Int, cocktailInstructions: String, cocktailName: String)
+        fun onItemClick(cocktailId: Int, cocktailName: String, cocktailInstructions: String, cocktailImage: String)
         fun onSaveClick(cocktail: Cocktail, isFavourite: Boolean, adapterFavouriteId: Int?, position: Int)
     }
 }
