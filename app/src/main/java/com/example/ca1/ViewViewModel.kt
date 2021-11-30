@@ -3,11 +3,16 @@ package com.example.ca1
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
+import com.example.ca1.api.RetrofitInstance
 import com.example.ca1.data.FavouriteEntity
 import com.example.plantapp.localDB.AppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class ViewViewModel (app: Application) : AndroidViewModel(app) {
     private val database = AppDatabase.getInstance(app)
@@ -17,13 +22,13 @@ class ViewViewModel (app: Application) : AndroidViewModel(app) {
     val currentFavourite: LiveData<FavouriteEntity>
     get() = _currentFavourite
 
+    val json: MutableLiveData<String>
+    get() = _json
+
+    val _json: MutableLiveData<String> = MutableLiveData()
+
     fun getFavourite(favouriteId: Int) {
         Log.i("Favourite check for", "Id : " + favouriteId)
-
-        // ** Was using this, the return type of this method used to be a boolean, not necessary **
-        // Will return true or false from this method,
-        // false by default, but if the passed cocktailId is an existing favourite, returns true
-        //var exists: Boolean = false;
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
@@ -37,10 +42,6 @@ class ViewViewModel (app: Application) : AndroidViewModel(app) {
                 }
             }
         }
-//        if(exists){
-//            return true;
-//        }
-//        return false;
     }
 
     fun saveFavourite(favouriteEntity: FavouriteEntity) {
@@ -66,6 +67,25 @@ class ViewViewModel (app: Application) : AndroidViewModel(app) {
                 _currentFavourite.postValue(null)
                     //exists = true;
             }
+        }
+    }
+
+    fun getFullJson(searchQuery: String){
+        viewModelScope.launch {
+            RetrofitInstance.api.getCocktailsJson(searchQuery).enqueue(object:
+                Callback<ResponseBody> {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    //handle error here
+                }
+
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    //your raw string response
+                    val stringResponse = response.body()?.string()
+
+                    _json.postValue(stringResponse)
+                }
+
+            })
         }
     }
 }

@@ -20,6 +20,8 @@ import com.example.ca1.data.FavouriteEntity
 import com.example.ca1.data.MergedData
 import com.example.ca1.databinding.MainFragmentBinding
 import com.example.ca1.model.Cocktail
+import org.json.JSONArray
+import org.json.JSONObject
 
 class MainFragment : Fragment(),
     // Useful article explaining MVVM, Observers and Observables, and the difference between each layer of the MVVM architecture
@@ -40,6 +42,9 @@ class MainFragment : Fragment(),
     private lateinit var spinner: ProgressBar
     var cocktailItems: List<Cocktail>? = null
     var favouriteItems: MutableList<FavouriteEntity?>? = null
+
+    private lateinit var responseJson: String
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -56,6 +61,11 @@ class MainFragment : Fragment(),
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         val liveData = viewModel.fetchData()
         viewModel.getCocktails(searchQuery)
+
+        viewModel.getFullJson(searchQuery)
+
+
+
 
 
         // now we have references to all child view components within the layout
@@ -90,11 +100,7 @@ class MainFragment : Fragment(),
         // Instead, the data is passed through the view models.
         liveData.observe(viewLifecycleOwner,
             { it ->
-                if(it == null){
-                    spinner.visibility = View.VISIBLE;
-                } else{
-                    spinner.visibility = View.GONE;
-                }
+
 
                 when(it){
                     is MergedData.CocktailData -> cocktailItems = it.cocktailItems
@@ -108,13 +114,54 @@ class MainFragment : Fragment(),
                     binding.recyclerView.layoutManager = LinearLayoutManager(activity)
                     //                    liveData.removeObserver(this)
                 }
+
+                viewModel.json.observe(viewLifecycleOwner, Observer {
+                    with(it){
+                        responseJson = it
+                        var jsonArray = JSONObject(responseJson)
+                        val drink: JSONObject
+                        val drinksObject: JSONArray = jsonArray.getJSONArray("drinks")
+                        // drinksObject = json for every drink
+                        // Outer loop gets a drink object from this drinksObject while there are still objects in the list
+                        var j:Int = -1
+                        while(j < (cocktailItems?.size!!-1)){
+                            j++
+                            val singleDrink = drinksObject.getJSONObject(j)
+                            // We loop through and fill this list
+                            var ingredients = mutableMapOf<String, String>()
+                            var i:Int = 0
+                            // There are **always** 15 ingredients and corresponding measures
+                            while(i < 15){
+                                i++
+                                with(it){
+                                    if(singleDrink.optString("strIngredient$i") != "null"){
+                                        if(it.toString().contains("strIngredient")){
+                                            val ingredient = singleDrink.optString("strIngredient$i")
+
+                                            val measure = singleDrink.optString("strMeasure$i")
+                                            // optString returns null if nothing there
+                                            ingredients.put(measure, ingredient)
+                                        }
+                                    }
+                                }
+                            }
+                            cocktailItems!![j].ingredients = ingredients
+                        }
+                    }
+                })
+
+                if(it == null){
+                    spinner.visibility = View.VISIBLE;
+                } else{
+                    spinner.visibility = View.GONE;
+                }
             })
         return binding.root
     }
-    override fun onItemClick(cocktailId: Int, cocktailName: String, cocktailInstructions: String, cocktailImage: String) {
+    override fun onItemClick(cocktailId: Int, cocktailName: String, cocktailInstructions: String, cocktailImage: String, ingredients: Array<Pair<String, String>>) {
         Log.i(TAG, "onItemClick: received cocktail id $cocktailId")
         // sending data from MainFragment to ViewFragment
-        val action = MainFragmentDirections.actionViewCocktail(cocktailId, cocktailName, cocktailInstructions, cocktailImage)
+        val action = MainFragmentDirections.actionViewCocktail(cocktailId, cocktailName, cocktailInstructions, cocktailImage, ingredients)
         // get a reference to the navigation host, passing in a strongly typed value (an int)
         // means we don't have to interpret the passed data on the other side,
         //  there's no risk of us messing it up because it's now strongly typed

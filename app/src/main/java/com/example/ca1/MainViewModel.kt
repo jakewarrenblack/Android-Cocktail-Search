@@ -9,10 +9,15 @@ import com.example.ca1.data.FavouriteEntity
 import com.example.ca1.data.MergedData
 import com.example.ca1.data.SampleDataProvider
 import com.example.ca1.model.Cocktail
+import com.example.ca1.model.CocktailResponse
 import com.example.plantapp.localDB.AppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import okhttp3.ResponseBody
 
 // https://www.geeksforgeeks.org/viewmodel-in-android-architecture-components/
 // As part of the MVVM (Model, View, ViewModel) android architecture,
@@ -22,6 +27,10 @@ import kotlinx.coroutines.withContext
 class MainViewModel (app: Application) : AndroidViewModel(app) {
     private val database = AppDatabase.getInstance(app)
 
+    val json: MutableLiveData<String>
+        get() = _json
+
+    val _json: MutableLiveData<String> = MutableLiveData()
 
 
     val _favourites: MutableLiveData<MutableList<FavouriteEntity?>?> = MutableLiveData()
@@ -51,6 +60,8 @@ class MainViewModel (app: Application) : AndroidViewModel(app) {
     val isLoading: LiveData<Boolean>
         get() = _isLoading
 
+
+
     fun getCocktails(searchQuery: String){
         // a coroutine function can only be called from a coroutine,
         // so we make one:
@@ -61,27 +72,17 @@ class MainViewModel (app: Application) : AndroidViewModel(app) {
             Log.i(TAG, "Fetched cocktails: $fetchedCocktails")
             _cocktails.postValue(fetchedCocktails)
 
-
-
                 val favourite =
                     database?.favouriteDao()?.getAll()
 
                 _favourites.postValue(favourite)
 
-//                favourite?.let {
-//                    _favourites.value = it
-//                    Log.i("Favourite", "Cocktail Returned from DB" + it[0]?.myCocktails)
-//                    //exists = true;
-//                }
                 _isLoading.postValue(false)
             }
         }
     }
 
     fun saveFavourite(favouriteEntity: FavouriteEntity) {
-
-
-
         viewModelScope.launch {
             withContext(Dispatchers.IO){
                 database?.favouriteDao()?.insertFavourite(favouriteEntity)
@@ -93,28 +94,18 @@ class MainViewModel (app: Application) : AndroidViewModel(app) {
                 _favourites.postValue(tempFavourites)
             }
         }
-
-        //tempFavourites?.add(favouriteEntity)
-       //_favourites.value = tempFavourites
     }
 
     fun removeFavourite(favouriteEntity: FavouriteEntity) {
-
-
         viewModelScope.launch {
             withContext(Dispatchers.IO){
                 // Pass only an ID for this one, we're removing, not inserting an entity
                 database?.favouriteDao()?.removeFavourite(favouriteEntity.id)
-
                 _currentFavourite.postValue(null)
                 tempFavourites?.remove(favouriteEntity)
                 _favourites.postValue(tempFavourites)
-                //exists = true;
             }
         }
-
-        //tempFavourites?.remove(favouriteEntity)
-        //_favourites.value = tempFavourites
     }
 
     fun getFavourite(favouriteId: Int) {
@@ -159,5 +150,24 @@ class MainViewModel (app: Application) : AndroidViewModel(app) {
             }
         }
         return liveDataMerger
+    }
+
+    fun getFullJson(searchQuery: String){
+        viewModelScope.launch {
+            RetrofitInstance.api.getCocktailsJson(searchQuery).enqueue(object:
+                Callback<ResponseBody> {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    //handle error here
+                }
+
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    //your raw string response
+                    val stringResponse = response.body()?.string()
+
+                    _json.postValue(stringResponse)
+                }
+
+            })
+        }
     }
 }

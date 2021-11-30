@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.ca1.data.FavouriteEntity
 import com.example.ca1.databinding.ViewFragmentBinding
 import kotlinx.coroutines.processNextEventInCurrentThread
@@ -30,6 +31,8 @@ class ViewFragment : Fragment() {
     private lateinit var viewViewModel: ViewViewModel
 
     private lateinit var mainViewModel: MainViewModel
+
+    private lateinit var myJson: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,6 +60,8 @@ class ViewFragment : Fragment() {
         binding.cocktailText.setText("${args.cocktailName}")
 
         binding.cocktailInstructions.setText("${args.cocktailInstructions}")
+
+        Glide.with(binding.root).load(args.cocktailImage).centerCrop().into(binding.cocktailImage)
         // this file uses the view_fragment.xml as its layout file
 
         // if the user runs a back gesture either through an actual button OR a gesture,
@@ -75,11 +80,12 @@ class ViewFragment : Fragment() {
 
 
 
+
         binding.favouriteButton.setOnClickListener {
             saveFavourite();
         }
 
-        // I know I need to observe this data, still a bit confused on how exactly to do it
+
         // I need to get information back from this coroutine
         mainViewModel.currentFavourite.observe(viewLifecycleOwner, Observer{
             // If no existing cocktail is returned from the local storage DB
@@ -90,6 +96,13 @@ class ViewFragment : Fragment() {
                 binding.hasBeenFavouritedIndicator.text = "Saved!"
             }
         })
+
+        viewViewModel.json.observe(viewLifecycleOwner, Observer{
+            with(it){
+                myJson = it
+            }
+        })
+
 
             // we've already inflated the layout, so we'll just return the binding.root instead of returning the inflated layout
             return binding.root

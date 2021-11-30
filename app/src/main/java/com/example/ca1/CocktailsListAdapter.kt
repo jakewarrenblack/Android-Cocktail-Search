@@ -70,6 +70,7 @@ class CocktailsListAdapter(
             }
             if (cocktail != null) {
                 cocktailText.text = cocktail.strDrink
+
             }
             // in here we already have a reference to the binding
             // so we get a reference to the root
@@ -78,7 +79,7 @@ class CocktailsListAdapter(
             root.setOnClickListener{
                 // and this is the unique ID for that piece of data
                 if (cocktail != null) {
-                    listener.onItemClick(cocktail.idDrink, cocktail.strDrink, cocktail.strInstructions, cocktail.strDrinkThumb)
+                    listener.onItemClick(cocktail.idDrink, cocktail.strDrink, cocktail.strInstructions, cocktail.strDrinkThumb, cocktail.ingredients.toList().toTypedArray())
                 }
             }
 
@@ -148,7 +149,7 @@ class CocktailsListAdapter(
     // set up a relationship between the data item being clicked and the fragment in which the data is displayed
     interface ListItemListener {
         // passing the current cocktail ID
-        fun onItemClick(cocktailId: Int, cocktailName: String, cocktailInstructions: String, cocktailImage: String)
+        fun onItemClick(cocktailId: Int, cocktailName: String, cocktailInstructions: String, cocktailImage: String, ingredients: Array<Pair<String, String>>)
         fun onSaveClick(cocktail: Cocktail, isFavourite: Boolean, adapterFavouriteId: Int?, position: Int)
     }
 }
