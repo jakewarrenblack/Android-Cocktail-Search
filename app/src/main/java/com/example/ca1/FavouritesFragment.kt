@@ -45,7 +45,7 @@ class FavouritesFragment : Fragment(),
 
         //val liveData = viewModel.fetchData()
 
-        with(binding.mainRecyclerView){
+        with(binding.favouritesRecyclerView){
             setHasFixedSize(true)
             val divider = DividerItemDecoration(
                 context, LinearLayoutManager(context).orientation
@@ -61,8 +61,8 @@ class FavouritesFragment : Fragment(),
                     viewModel.getCocktails(favouriteItems)
 
                     adapter = FavouritesListAdapter(favouriteItems, this@FavouritesFragment)
-                    binding.mainRecyclerView.adapter = adapter
-                    binding.mainRecyclerView.layoutManager = LinearLayoutManager(activity)
+                    binding.favouritesRecyclerView.adapter = adapter
+                    binding.favouritesRecyclerView.layoutManager = LinearLayoutManager(activity)
 
                 }
 
@@ -83,10 +83,11 @@ class FavouritesFragment : Fragment(),
             Log.i("FavouriteExistence", "Rremoving favourite: ${favourite.id} / adapterfavourite: $adapterFavouriteId")
             favouriteItems?.remove(favourite)
             viewModel.removeFavourite(favourite)
-            adapter = FavouritesListAdapter(favouriteItems, this@FavouritesFragment)
+            binding.favouritesRecyclerView.removeViewAt(position)
+            //adapter = FavouritesListAdapter(favouriteItems, this@FavouritesFragment)
 
             adapter.notifyItemRemoved(position);
-            adapter.notifyItemRangeChanged(position, favouriteItems?.size!!);
+            //adapter.notifyItemRangeChanged(position, favouriteItems?.size!!);
             //adapter.notifyDataSetChanged()
 
     }

@@ -9,7 +9,7 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/mainRecyclerView"
+        android:id="@+id/favouritesRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:clickable="true"
@@ -26,10 +26,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        app:layout_constraintBottom_toBottomOf="@+id/mainRecyclerView"
-        app:layout_constraintEnd_toEndOf="@+id/mainRecyclerView"
-        app:layout_constraintStart_toStartOf="@+id/mainRecyclerView"
-        app:layout_constraintTop_toTopOf="@+id/mainRecyclerView"
+        app:layout_constraintBottom_toBottomOf="@+id/favouritesRecyclerView"
+        app:layout_constraintEnd_toEndOf="@+id/favouritesRecyclerView"
+        app:layout_constraintStart_toStartOf="@+id/favouritesRecyclerView"
+        app:layout_constraintTop_toTopOf="@+id/favouritesRecyclerView"
         tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
