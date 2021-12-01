@@ -72,10 +72,16 @@ class FavouritesViewModel (app: Application) : AndroidViewModel(app) {
                 //if (iterator != null) {
                     //for (item in iterator) {
                         _isLoading.postValue(true)
-                        val fetchedCocktails = RetrofitInstance.api.getCocktailById(favourites?.get(0)?.id).drinks
-                        Log.i(TAG, "Fetched cocktails: $fetchedCocktails")
-                        _cocktails.postValue(fetchedCocktails)
-                        _isLoading.postValue(false)
+                        if(favourites?.isNotEmpty() == true) {
+                            val fetchedCocktails =
+                                RetrofitInstance.api.getCocktailById(favourites.get(0)?.id).drinks
+                            Log.i(TAG, "Fetched cocktails: $fetchedCocktails")
+                            _cocktails.postValue(fetchedCocktails)
+                            _isLoading.postValue(false)
+                        }
+                        else{
+                            _cocktails.postValue(null)
+                        }
                     //}
                // }
             }

@@ -17,8 +17,10 @@
         android:focusableInTouchMode="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <ProgressBar
         android:id="@+id/progressBar1"
@@ -31,5 +33,16 @@
         app:layout_constraintStart_toStartOf="@+id/favouritesRecyclerView"
         app:layout_constraintTop_toTopOf="@+id/favouritesRecyclerView"
         tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/noFavouritesSaved"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No favourites saved yet."
+        app:layout_constraintBottom_toTopOf="@+id/progressBar1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/favouritesRecyclerView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

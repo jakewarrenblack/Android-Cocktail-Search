@@ -55,15 +55,23 @@ class FavouritesFragment : Fragment(),
 
         viewModel.favourites.observe(viewLifecycleOwner, Observer{
             if(viewModel.favourites.value != null){
-                this.favouriteItems = it
-                spinner.visibility = View.GONE;
-                if(favouriteItems != null){
-                    viewModel.getCocktails(favouriteItems)
+                if (it != null) {
+                    if(it.isNotEmpty()) {
+                        this.favouriteItems = it
+                        spinner.visibility = View.GONE;
+                        if (favouriteItems != null) {
+                            viewModel.getCocktails(favouriteItems)
 
-                    adapter = FavouritesListAdapter(favouriteItems, this@FavouritesFragment)
-                    binding.favouritesRecyclerView.adapter = adapter
-                    binding.favouritesRecyclerView.layoutManager = LinearLayoutManager(activity)
+                            adapter = FavouritesListAdapter(favouriteItems, this@FavouritesFragment)
+                            binding.favouritesRecyclerView.adapter = adapter
+                            binding.favouritesRecyclerView.layoutManager = LinearLayoutManager(activity)
 
+                        }
+                    }
+                    else{
+                        spinner.visibility = View.GONE
+                        binding.noFavouritesSaved.visibility = View.VISIBLE
+                    }
                 }
 
             }
@@ -87,6 +95,11 @@ class FavouritesFragment : Fragment(),
             //adapter = FavouritesListAdapter(favouriteItems, this@FavouritesFragment)
 
             adapter.notifyItemRemoved(position);
+
+            // Update the UI if we've just the unsaved the only favourite
+            if(favouriteItems?.isEmpty() == true){
+                binding.noFavouritesSaved.visibility = View.VISIBLE
+            }
             //adapter.notifyItemRangeChanged(position, favouriteItems?.size!!);
             //adapter.notifyDataSetChanged()
 

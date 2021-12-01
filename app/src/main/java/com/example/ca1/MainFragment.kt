@@ -107,13 +107,18 @@ class MainFragment : Fragment(),
                     is MergedData.FavouriteData -> favouriteItems = it.favouriteItems
                 }
 
-                if (cocktailItems != null && favouriteItems != null) {
-                    Log.i("CocktailLogging:", it.toString())
+                if(cocktailItems?.isNotEmpty() == true) {
+                    if (cocktailItems != null && favouriteItems != null) {
+                        Log.i("CocktailLogging:", it.toString())
 
-                    adapter = CocktailsListAdapter(cocktailItems,favouriteItems, this@MainFragment)
-                    binding.mainRecyclerView.adapter = adapter
-                    binding.mainRecyclerView.layoutManager = LinearLayoutManager(activity)
-                    //                    liveData.removeObserver(this)
+                        adapter =
+                            CocktailsListAdapter(cocktailItems, favouriteItems, this@MainFragment)
+                        binding.mainRecyclerView.adapter = adapter
+                        binding.mainRecyclerView.layoutManager = LinearLayoutManager(activity)
+                        //                    liveData.removeObserver(this)
+                    }
+                }else{
+                    binding.noCocktailsFound.visibility = View.VISIBLE
                 }
 
 //                viewModel.json.observe(viewLifecycleOwner, Observer {
