@@ -1,8 +1,11 @@
 package com.example.ca1
 
+import android.content.Context
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ca1.databinding.ListItemBinding
 import com.example.ca1.model.Cocktail
@@ -14,7 +17,8 @@ class CocktailsListAdapter(
     private val cocktailsList: List<Cocktail>?,
     private var favouritesList: MutableList<FavouriteEntity?>?,
     // this listener object is a reference to the fragment that is calling the adapter
-    private val listener: ListItemListener
+    private val listener: ListItemListener,
+
 ) :
     // This is the ViewHolder definition,
     // which is extended off of our RecyclerView.
@@ -23,6 +27,7 @@ class CocktailsListAdapter(
     RecyclerView.Adapter<CocktailsListAdapter.ViewHolder>() {
     var favourite: FavouriteEntity? = null
     var isFavourite: Boolean = false
+    private lateinit var context: Context
     inner class ViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         val binding = ListItemBinding.bind(itemView)
@@ -38,6 +43,9 @@ class CocktailsListAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         // defining what layout xml item is responsible for the look of our list item
 
+
+
+        context = parent.context
 
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.list_item, parent, false)
@@ -62,6 +70,9 @@ class CocktailsListAdapter(
 //                favourite = favouritesList!![position]!!
 //            }
 //        }
+//
+       val myCustomFont : Typeface? = ResourcesCompat.getFont(context, R.font.comfortaa)
+        holder.binding.cocktailText.typeface = myCustomFont
 
         // this 'with' block means we can refer to lots of stuff inside the binding
         with(holder.binding) {

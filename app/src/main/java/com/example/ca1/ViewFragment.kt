@@ -1,5 +1,6 @@
 package com.example.ca1
 
+import android.graphics.Typeface
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -165,6 +167,9 @@ class ViewFragment : Fragment(),
                     // cocktailItems!![j].ingredients = ingredients
                 }
             })
+
+            val myCustomFont : Typeface? = getActivity()?.let { ResourcesCompat.getFont(it, R.font.lobster_regular) }
+            binding.cocktailText.typeface = myCustomFont
 
 
             // we've already inflated the layout, so we'll just return the binding.root instead of returning the inflated layout

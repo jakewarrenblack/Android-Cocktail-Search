@@ -1,5 +1,6 @@
 package com.example.ca1
 
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.SearchView
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
@@ -61,7 +63,6 @@ class MainFragment : Fragment(),
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         val liveData = viewModel.fetchData()
         viewModel.getCocktails(searchQuery)
-
         //viewModel.getFullJson(searchQuery)
 
 

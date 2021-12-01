@@ -36,6 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
             android:fontFamily="sans-serif"
+            android:textStyle="bold"
             android:textColor="@color/black"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
