@@ -78,7 +78,16 @@ class FavouritesFragment : Fragment(),
         findNavController().navigate(action)
     }
 
-    override fun onSaveClick(cocktail: Cocktail, isFavourite: Boolean, adapterFavouriteId: Int?, position: Int) {
+    override fun onSaveClick(favourite: FavouriteEntity, isFavourite: Boolean, adapterFavouriteId: Int?, position: Int) {
+        // In the MainFragment we have an if statement to check if the cocktail is an existing favourite, but in this case we know it is, because we're looking at a list of FavouriteEntities
+            Log.i("FavouriteExistence", "Rremoving favourite: ${favourite.id} / adapterfavourite: $adapterFavouriteId")
+            favouriteItems?.remove(favourite)
+            viewModel.removeFavourite(favourite)
+            adapter = FavouritesListAdapter(favouriteItems, this@FavouritesFragment)
+
+            adapter.notifyItemRemoved(position);
+            adapter.notifyItemRangeChanged(position, favouriteItems?.size!!);
+            //adapter.notifyDataSetChanged()
 
     }
 }

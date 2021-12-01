@@ -22,6 +22,8 @@ class FavouritesViewModel (app: Application) : AndroidViewModel(app) {
     val favourites: LiveData<MutableList<FavouriteEntity?>?>
         get() = _favourites
 
+    var tempFavourites = _favourites.value
+
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean>
         get() = _isLoading
@@ -49,6 +51,19 @@ class FavouritesViewModel (app: Application) : AndroidViewModel(app) {
             }
         }
     }
+
+    fun removeFavourite(favouriteEntity: FavouriteEntity) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO){
+                // Pass only an ID for this one, we're removing, not inserting an entity
+                database?.favouriteDao()?.removeFavourite(favouriteEntity.id)
+                //_currentFavourite.postValue(null)
+                tempFavourites?.remove(favouriteEntity)
+                _favourites.postValue(tempFavourites)
+            }
+        }
+    }
+
     fun getCocktails(favourites: MutableList<FavouriteEntity?>?){
         viewModelScope.launch {
             _isLoading.postValue(true)
