@@ -120,9 +120,11 @@ class ViewFragment : Fragment(),
             mainViewModel.currentFavourite.observe(viewLifecycleOwner, Observer {
                 // If no existing cocktail is returned from the local storage DB
                 if (mainViewModel.currentFavourite.value == null) {
-                    binding.hasBeenFavouritedIndicator.text = "Not saved";
+                    binding.favouriteButton.text = "Not saved"
+                    //binding.hasBeenFavouritedIndicator.text = "Not saved";
                 } else {
-                    binding.hasBeenFavouritedIndicator.text = "Saved!"
+                    binding.favouriteButton.text = "Saved!"
+                    //binding.hasBeenFavouritedIndicator.text = "Saved!"
                 }
             })
 

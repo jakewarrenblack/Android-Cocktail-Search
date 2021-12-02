@@ -64,6 +64,10 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             tools:text="Hello" />
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="25dp" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/ingredientsRecyclerView"
             android:layout_width="match_parent"
@@ -84,18 +88,9 @@
             android:id="@+id/favouriteButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="7dp"
             android:text="Favourite"
             />
-
-        <TextView
-            android:id="@+id/hasBeenFavouritedIndicator"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:visibility="visible"
-            android:text="Not favourited" />
-
 
     </LinearLayout>
 

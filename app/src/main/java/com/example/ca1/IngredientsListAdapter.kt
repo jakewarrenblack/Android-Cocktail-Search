@@ -6,8 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ca1.databinding.IngredientListItemBinding
-import com.example.ca1.databinding.ListItemBinding
-import com.example.ca1.model.Cocktail
+import com.squareup.picasso.Picasso
 
 class IngredientsListAdapter (
     private var ingredients: MutableMap<String, String>,
@@ -50,8 +49,16 @@ class IngredientsListAdapter (
                     //ingredientText.text = key
                     //measureText.text = value
 
-                    ingredientText.text = ingredient.first
-                    measureText.text = ingredient.second
+
+                    if(ingredient.second.isNotBlank()) {
+                        ingredientText.text = ingredient.second
+                        measureText.text = ingredient.first
+
+                        Picasso.get()
+                            .load("https://www.thecocktaildb.com/images/ingredients/${ingredientText.text}.png")
+                            .error(R.drawable.ic_launcher_background).resize(50, 50).centerInside()
+                            .into(imageView2);
+                    }
                 }
             }
 
