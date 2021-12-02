@@ -149,8 +149,15 @@ class ViewFragment : Fragment(),
                                     val ingredient = singleDrink.optString("strIngredient$i")
 
                                     val measure = singleDrink.optString("strMeasure$i")
-                                    // optString returns null if nothing there
-                                    ingredients.put(measure, ingredient)
+                                    // optString returns null if nothing there, literally 'null' in string format
+                                    // if this isn't possible, it will return an empty string, so check against this,
+                                    // keeping in mind that we can have an empty measure with an ingredient
+                                    // eg sugar may not have a measure, it's just 'to taste'
+                                    // so we allow 'null' measures
+
+                                    if(ingredient.isNotBlank()){
+                                        ingredients.put(measure, ingredient)
+                                    }
                                 }
                             }
                         }

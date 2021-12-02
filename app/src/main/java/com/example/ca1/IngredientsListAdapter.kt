@@ -50,9 +50,12 @@ class IngredientsListAdapter (
                     //measureText.text = value
 
 
-                    if(ingredient.second.isNotBlank()) {
+                    if(key.isNotEmpty() && value.isNotEmpty()) {
                         ingredientText.text = ingredient.second
-                        measureText.text = ingredient.first
+
+                        // Sometimes null, eg 'sugar' might not really have a measure, just to taste
+                        // They come in the form of strings literally with the word 'null' because I'm using optString in viewfragment's raw json parsing method to ensure a string is always returned
+                        if(ingredient.first != "null") {measureText.text = ingredient.first}
 
                         Picasso.get()
                             .load("https://www.thecocktaildb.com/images/ingredients/${ingredientText.text}.png")
