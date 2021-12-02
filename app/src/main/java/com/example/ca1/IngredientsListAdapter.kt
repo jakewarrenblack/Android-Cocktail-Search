@@ -12,7 +12,6 @@ class IngredientsListAdapter (
     private var ingredients: MutableMap<String, String>,
     private var listener: ListItemListener
 ):
-
     RecyclerView.Adapter<IngredientsListAdapter.ViewHolder>() {
 //    var favourite: FavouriteEntity? = null
 //    var isFavourite: Boolean = false
@@ -30,17 +29,9 @@ class IngredientsListAdapter (
     override fun getItemCount() = ingredients.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        // will need some other method for getting single item from map
-        //val ingredient = ingredients?.getValue(holder.adapterPosition)
-
         val list = ingredients.toList()
 
         val ingredient = list.get(holder.adapterPosition)
-
-        //val list: List<Pair<String, String>> = ingredients.toList()
-
-
-
         // this 'with' block means we can refer to lots of stuff inside the binding
         with(holder.binding) {
             fun <K, V> printMap(map: Map<K, V>) {
@@ -49,10 +40,14 @@ class IngredientsListAdapter (
                     //ingredientText.text = key
                     //measureText.text = value
 
+                    // TODO: Finish onclick for ingredient
+                    // Have api method, make a function for it in the viewmodel and call it in the fragment
+                    // only if ingredient id not null
+                    // then pass the result in here maybe?
+                    // or pass it to the onclick implementation of the interface in the fragment
 
                     if(key.isNotEmpty() && value.isNotEmpty()) {
                         ingredientText.text = ingredient.second
-
                         // Sometimes null, eg 'sugar' might not really have a measure, just to taste
                         // They come in the form of strings literally with the word 'null' because I'm using optString in viewfragment's raw json parsing method to ensure a string is always returned
                         if(ingredient.first != "null") {measureText.text = ingredient.first}
@@ -64,15 +59,11 @@ class IngredientsListAdapter (
                     }
                 }
             }
-
             print(ingredients.toList())
-
             printMap(ingredients)
-
         }
     }
 
     interface ListItemListener {
-
     }
 }

@@ -3,6 +3,7 @@ package com.example.ca1.api
 import com.example.ca1.data.CocktailEntity
 import com.example.ca1.model.Cocktail
 import com.example.ca1.model.CocktailResponse
+import com.example.ca1.model.IngredientResponse
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.GET
@@ -28,5 +29,8 @@ interface CocktailApi {
 
     @GET("lookup.php")
     suspend fun getCocktailById(@Query("i") searchQuery: Int?): CocktailResponse
+
+    @GET("lookup.php")
+    suspend fun getIngredientById(@Query("iid") searchQuery: Int?): IngredientResponse
 
 }

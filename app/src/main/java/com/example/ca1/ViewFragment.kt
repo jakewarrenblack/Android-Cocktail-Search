@@ -148,6 +148,8 @@ class ViewFragment : Fragment(),
                                 if (it.toString().contains("strIngredient")) {
                                     val ingredient = singleDrink.optString("strIngredient$i")
 
+                                    val idDrink = singleDrink.optString("idDrink")
+
                                     val measure = singleDrink.optString("strMeasure$i")
                                     // optString returns null if nothing there, literally 'null' in string format
                                     // if this isn't possible, it will return an empty string, so check against this,
@@ -155,7 +157,7 @@ class ViewFragment : Fragment(),
                                     // eg sugar may not have a measure, it's just 'to taste'
                                     // so we allow 'null' measures
 
-                                    if(ingredient.isNotBlank()){
+                                    if(ingredient.isNotBlank() && idDrink.isNotBlank()){
                                         ingredients.put(measure, ingredient)
                                     }
                                 }
