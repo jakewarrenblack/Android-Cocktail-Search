@@ -226,30 +226,35 @@ class ViewFragment : Fragment(),
             }
         }
 
-        override fun onItemClicked(ingredientName: String) {
+        fun getIngredientDetails(ingredientName: String){
             viewViewModel.getIngredientDetailsByName(ingredientName)
-            var ingredientDescription = ""
+        }
+
+        fun navigateToNextPage(ingredientName: String, ingredientDescription: String){
+            val action =
+                ViewFragmentDirections.actionViewFragmentToIngredientsFragment(
+                    ingredientName,
+                    ingredientDescription
+                )
+            findNavController().navigate(action)
+        }
+
+
+        override fun onItemClicked(ingredientName: String) {
+            getIngredientDetails(ingredientName)
 
             viewViewModel.ingredientDetails?.observe(viewLifecycleOwner, Observer{
                 with(it){
-
                     // Get the name of the ingredient
-                    ingredientDescription = it[0].strDescription
-                    if(it[0].strDescription != null && it[0].strDescription.isNotEmpty()) {
-                        Log.i("Ingredient details: ", it[0].strDescription)
-
-                        if (ingredientDescription.isNotBlank()) {
-                            // Make sure returned details match the the name of the ingredient we've clicked on
-                            if(ingredientName == it[0].strIngredient) {
-                                val action =
-                                    ViewFragmentDirections.actionViewFragmentToIngredientsFragment(
-                                        ingredientName,
-                                        it[0].strDescription
-                                    )
-                                findNavController().navigate(action)
+                    if(it!= null) {
+                        if(it[0].strDescription!=null) {
+                            if (it[0].strDescription.isNotEmpty()) {
+                                // Make sure returned details match the the name of the ingredient we've clicked on
+                                if (ingredientName.equals(it[0].strIngredient, ignoreCase = true)) {
+                                    navigateToNextPage(ingredientName, it[0].strDescription)
+                                }
                             }
                         }
-                        viewViewModel.clearIngredientDetails()
                     }
                 }
             })
