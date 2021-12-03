@@ -1,5 +1,6 @@
 package com.example.ca1.model
 
 data class CocktailResponse (
-    val drinks: List<Cocktail>
+    val drinks: List<Cocktail>,
+    val ingredients: List<Ingredient>
 )

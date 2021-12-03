@@ -50,6 +50,9 @@
             android:name="cocktailImage"
             app:argType="string"
             android:defaultValue="None" />
+        <action
+            android:id="@+id/action_viewFragment_to_ingredientsFragment"
+            app:destination="@id/ingredientsFragment" />
 
     </fragment>
     <fragment
@@ -62,6 +65,18 @@
             android:id="@+id/action_view_cocktail"
             app:destination="@id/viewFragment" />
 
+    </fragment>
+    <fragment
+        android:id="@+id/ingredientsFragment"
+        android:name="com.example.ca1.IngredientsFragment"
+        android:label="ingredients_fragment"
+        tools:layout="@layout/ingredients_fragment" >
+        <argument
+            android:name="ingredientName"
+            app:argType="string" />
+        <argument
+            android:name="ingredientDescription"
+            app:argType="string" />
     </fragment>
 
 

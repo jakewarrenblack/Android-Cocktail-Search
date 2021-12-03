@@ -21,6 +21,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.ca1.data.FavouriteEntity
 import com.example.ca1.databinding.ViewFragmentBinding
+import com.example.ca1.model.Ingredient
+import com.squareup.picasso.Picasso
 import kotlinx.coroutines.processNextEventInCurrentThread
 import org.json.JSONArray
 import org.json.JSONObject
@@ -151,25 +153,16 @@ class ViewFragment : Fragment(),
                                     if(ingredient.isNotBlank() && idDrink.isNotBlank()){
                                         // Now we've created our map of measures and ingredients,
                                         // We add it to our ingredients list and pass it through to the ingredients adapter
-                                            viewModel.getIngredientDetailsById(idDrink.toInt())
-                                            viewModel.ingredientDetails.observe(viewLifecycleOwner, Observer{
-                                                Log.i("Ingredient details: ", it.toString())
-                                            })
-
-
-                                            ingredients.put(measure, ingredient)
+                                        ingredients.put(measure, ingredient)
                                     }
                                 }
                             }
                         }
                     }
-
                     if (ingredients.isNotEmpty()) {
                         adapter = IngredientsListAdapter(ingredients, this@ViewFragment)
                         binding.ingredientsRecyclerView.adapter = adapter
-                        binding.ingredientsRecyclerView.layoutManager =
-                            LinearLayoutManager(activity)
-
+                        binding.ingredientsRecyclerView.layoutManager = LinearLayoutManager(activity)
                         spinner.visibility = View.GONE;
                     }
                 }
@@ -231,5 +224,34 @@ class ViewFragment : Fragment(),
                     )
                 )
             }
+        }
+
+        override fun onItemClicked(ingredientName: String) {
+            viewViewModel.getIngredientDetailsByName(ingredientName)
+            var ingredientDescription = ""
+
+            viewViewModel.ingredientDetails?.observe(viewLifecycleOwner, Observer{
+                with(it){
+
+                    // Get the name of the ingredient
+                    ingredientDescription = it[0].strDescription
+                    if(it[0].strDescription != null && it[0].strDescription.isNotEmpty()) {
+                        Log.i("Ingredient details: ", it[0].strDescription)
+
+                        if (ingredientDescription.isNotBlank()) {
+                            // Make sure returned details match the the name of the ingredient we've clicked on
+                            if(ingredientName == it[0].strIngredient) {
+                                val action =
+                                    ViewFragmentDirections.actionViewFragmentToIngredientsFragment(
+                                        ingredientName,
+                                        it[0].strDescription
+                                    )
+                                findNavController().navigate(action)
+                            }
+                        }
+                        viewViewModel.clearIngredientDetails()
+                    }
+                }
+            })
         }
     }

@@ -27,21 +27,49 @@ class ViewViewModel (app: Application) : AndroidViewModel(app) {
     val json: MutableLiveData<String>
     get() = _json
 
-    private val _ingredientDetails: MutableLiveData<List<Ingredient>> = MutableLiveData()
-    val ingredientDetails: LiveData<List<Ingredient>>
+    // This can be null, not all ingredients will have details
+    private val _ingredientDetails: MutableLiveData<List<Ingredient>>? = MutableLiveData()
+    val ingredientDetails: LiveData<List<Ingredient>>?
         get() = _ingredientDetails
 
     val _json: MutableLiveData<String> = MutableLiveData()
 
-    fun getIngredientDetailsById(id: Int){
+    private val _isLoading = MutableLiveData(false)
+    val isLoading: LiveData<Boolean>
+        get() = _isLoading
+
+    private val _ingredientDetailsList: MutableLiveData<List<Ingredient>>? = MutableLiveData()
+    val ingredientDetailsList: LiveData<List<Ingredient>>?
+        get() = _ingredientDetails
+
+    fun clearIngredientDetails(){
+        viewModelScope.launch{
+            _ingredientDetails?.postValue(null)
+        }
+    }
+
+    fun getIngredientDetailsByName(name: String){
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                val fetchedIngredientDetails = RetrofitInstance.api.getIngredientById(id).ingredient
-                Log.i(TAG, "Fetched ingredient details: $fetchedIngredientDetails")
-                _ingredientDetails.postValue(fetchedIngredientDetails)
+            _isLoading.postValue(true)
+            val fetchedIngredientDetails = RetrofitInstance.api.getIngredientByName(name).ingredients
+
+            Log.i(TAG, "Fetched ingredient details A: ${fetchedIngredientDetails}")
+            _isLoading.postValue(false)
+           _ingredientDetails?.postValue(fetchedIngredientDetails)
+        }
+    }
+
+    fun getDetailsOfIngredientList(ingredientNames: List<String>){
+        for(ingredientName in ingredientNames){
+            viewModelScope.launch {
+
+                val fetchedIngredientDetailsList = RetrofitInstance.api.getIngredientByName(ingredientName).ingredients
+                _ingredientDetailsList?.postValue(fetchedIngredientDetailsList)
             }
         }
     }
+
+
 
     fun getFavourite(favouriteId: Int) {
         Log.i("Favourite check for", "Id : " + favouriteId)
@@ -63,9 +91,7 @@ class ViewViewModel (app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             withContext(Dispatchers.IO){
                 database?.favouriteDao()?.insertFavourite(favouriteEntity)
-
-                // Not sure what I'm doing here,
-                // Trying to get the UI to update when a save is made
+                // get the UI to update when a save is made
                 getFavourite(favouriteEntity.id);
             }
         }

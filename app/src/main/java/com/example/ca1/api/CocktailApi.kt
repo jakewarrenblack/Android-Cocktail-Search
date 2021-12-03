@@ -6,6 +6,7 @@ import com.example.ca1.model.CocktailResponse
 import com.example.ca1.model.IngredientResponse
 import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -30,7 +31,8 @@ interface CocktailApi {
     @GET("lookup.php")
     suspend fun getCocktailById(@Query("i") searchQuery: Int?): CocktailResponse
 
-    @GET("lookup.php")
-    suspend fun getIngredientById(@Query("iid") searchQuery: Int?): IngredientResponse
+    // It has to be nullable, not every ingredient will have details, eg we don't need more information about an egg, but might have a paragraph about gin or vodka
+    @GET("search.php")
+    suspend fun getIngredientByName(@Query("i") searchQuery: String): CocktailResponse
 
 }

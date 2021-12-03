@@ -6,11 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ca1.databinding.IngredientListItemBinding
+import com.example.ca1.model.Ingredient
 import com.squareup.picasso.Picasso
 
 class IngredientsListAdapter (
     private var ingredients: MutableMap<String, String>,
-    private var listener: ListItemListener
+    private var listener: ListItemListener,
 ):
     RecyclerView.Adapter<IngredientsListAdapter.ViewHolder>() {
     inner class ViewHolder(itemView: View) :
@@ -56,6 +57,13 @@ class IngredientsListAdapter (
                             .load("https://www.thecocktaildb.com/images/ingredients/${ingredientText.text}.png")
                             .error(R.drawable.ic_launcher_background).resize(50, 50).centerInside()
                             .into(imageView2);
+
+                        root.setOnClickListener{
+                            // and this is the unique ID for that piece of data
+                            if (ingredient != null) {
+                                listener.onItemClicked(ingredient.second)
+                            }
+                        }
                     }
                 }
             }
@@ -65,5 +73,6 @@ class IngredientsListAdapter (
     }
 
     interface ListItemListener {
+        fun onItemClicked(ingredientName: String)
     }
 }

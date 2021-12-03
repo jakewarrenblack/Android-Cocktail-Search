@@ -28,7 +28,7 @@ abstract class AppDatabase: RoomDatabase() {
                         context.applicationContext,
                         AppDatabase::class.java,
                         "favourites.db"
-                    ).fallbackToDestructiveMigration()
+                    )//.fallbackToDestructiveMigration()
                         .build()
                 }
             }

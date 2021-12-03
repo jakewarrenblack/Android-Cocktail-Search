@@ -66,9 +66,6 @@ class MainFragment : Fragment(),
         //viewModel.getFullJson(searchQuery)
 
 
-
-
-
         // now we have references to all child view components within the layout
 
         // this codeblock allows us to reference the recyclerView binding many times
@@ -102,7 +99,6 @@ class MainFragment : Fragment(),
         liveData.observe(viewLifecycleOwner,
             { it ->
 
-
                 when(it){
                     is MergedData.CocktailData -> cocktailItems = it.cocktailItems
                     is MergedData.FavouriteData -> favouriteItems = it.favouriteItems
@@ -121,41 +117,6 @@ class MainFragment : Fragment(),
                 }else{
                     binding.noCocktailsFound.visibility = View.VISIBLE
                 }
-
-//                viewModel.json.observe(viewLifecycleOwner, Observer {
-//                    with(it){
-//                        responseJson = it
-//                        var jsonArray = JSONObject(responseJson)
-//                        val drink: JSONObject
-//                        val drinksObject: JSONArray = jsonArray.getJSONArray("drinks")
-//                        // drinksObject = json for every drink
-//                        // Outer loop gets a drink object from this drinksObject while there are still objects in the list
-//                        var j:Int = -1
-//                        while(j < (cocktailItems?.size!!-1)){
-//                            j++
-//                            val singleDrink = drinksObject.getJSONObject(j)
-//                            // We loop through and fill this list
-//                            var ingredients = mutableMapOf<String, String>()
-//                            var i:Int = 0
-//                            // There are **always** 15 ingredients and corresponding measures
-//                            while(i < 15){
-//                                i++
-//                                with(it){
-//                                    if(singleDrink.optString("strIngredient$i") != "null"){
-//                                        if(it.toString().contains("strIngredient")){
-//                                            val ingredient = singleDrink.optString("strIngredient$i")
-//
-//                                            val measure = singleDrink.optString("strMeasure$i")
-//                                            // optString returns null if nothing there
-//                                            ingredients.put(measure, ingredient)
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                            cocktailItems!![j].ingredients = ingredients
-//                        }
-//                    }
-//                })
 
                 if(it == null){
                     spinner.visibility = View.VISIBLE;
