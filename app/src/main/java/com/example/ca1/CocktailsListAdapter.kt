@@ -31,8 +31,6 @@ class CocktailsListAdapter(
     inner class ViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         val binding = ListItemBinding.bind(itemView)
-
-
     }
 
     // We can see the implementation of our ViewHolder all below here
@@ -40,11 +38,9 @@ class CocktailsListAdapter(
     // it calls the onCreateViewHolder method.
     // This method creates and initialises our ViewHolder and the View associated with it - (the inner class above)
     // but it doesn't fill the view's contents as we have not yet bound it to any specific data.
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         // defining what layout xml item is responsible for the look of our list item
-
-
-
         context = parent.context
 
         val inflater = LayoutInflater.from(parent.context)
@@ -59,18 +55,12 @@ class CocktailsListAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val cocktail = cocktailsList?.get(holder.adapterPosition)
 
+        // Assign the value of the current favourite (which is initially null) to use the same properties as the cocktail where the IDs are the same
         if(!favouritesList?.isEmpty()!! && cocktail != null){
             favourite = getFavourite(cocktail.idDrink)
         }
 
-        //val cocktail = cocktailsList?.get(position)
-
-//        if(favouritesList != null) {
-//            if (favouritesList!!.size > position) {
-//                favourite = favouritesList!![position]!!
-//            }
-//        }
-//
+        // Setting a custom font
        val myCustomFont : Typeface? = ResourcesCompat.getFont(context, R.font.comfortaa)
         holder.binding.cocktailText.typeface = myCustomFont
 
@@ -94,64 +84,23 @@ class CocktailsListAdapter(
                 }
             }
 
-//            if (favouritesList != null && favouritesList!!.isNotEmpty()) {
-//                for(favourite in favouritesList!!){
-//                    if (favourite != null && cocktail != null) {
-
             // If cocktail's id matches the id of an existing favourite,
             // set the state of the toggle to true (solid heart), otherwise false (outlined heart)
             //favouriteToggle.isChecked = favourite?.id == cocktail?.idDrink
             favouriteToggle.isChecked = favourite != null
-//                    }else{
-//                        favouriteToggle.setBackgroundResource(R.drawable.heart_outline)
-//                    }
-//                }
-//            }
-
-//            if(favourite != null) {
-//                if (cocktail?.idDrink == favourite?.id) {
-//                    // If a cocktail has the same id as an existing favourite, it must be a favourite
-//                    favouriteToggle.setBackgroundResource(R.drawable.heart_solid)
-//                    isFavourite = true
-//                }
-//            }
-
 
             favouriteToggle.setOnClickListener{
-////                if(this@CocktailsListAdapter::favourite.isInitialized){
-////                    if(favouriteToggle.isChecked){
-////                        favouriteToggle.setBackgroundResource(R.drawable.heart_solid)
-////                    }
-////                    else{
-////                        favouriteToggle.setBackgroundResource(R.drawable.heart_outline)
-////                    }
-////                }
                 if (cocktail != null) {
                     listener.onSaveClick(cocktail, isFavourite, favourite?.id, position)
                 }
             }
-
-
-
         }
     }
 
-    fun setFavourites(newFavourites: MutableList<FavouriteEntity?>) {
-        favouritesList = newFavourites
-    }
-
-    fun getFavourite(id: Int): FavouriteEntity?{
+    // We use this method to assign the value of the current favourite where a cocktail with the same ID exists
+    private fun getFavourite(id: Int): FavouriteEntity?{
         // Predicate filters for the matching element, where our ids are the same
         return favouritesList?.find{ it?.id == id}
-    }
-
-    fun removeFavourite(id: Int){
-        // needs a FavouriteEntity to run a remove, so we make the getFavourite method return a FavouriteEntity
-        favouritesList?.remove(getFavourite(id))
-    }
-
-    fun addFavourite(favourite: FavouriteEntity){
-        favouritesList?.add(favourite)
     }
 
     // handle a click on a list item
@@ -161,6 +110,7 @@ class CocktailsListAdapter(
     interface ListItemListener {
         // passing the current cocktail ID
         fun onItemClick(cocktailId: Int, cocktailName: String, cocktailInstructions: String, cocktailImage: String)
+        // We can build favourite entities using cocktail information, they're have the same properties
         fun onSaveClick(cocktail: Cocktail, isFavourite: Boolean, adapterFavouriteId: Int?, position: Int)
     }
 }

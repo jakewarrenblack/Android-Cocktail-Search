@@ -13,16 +13,14 @@ class IngredientsListAdapter (
     private var listener: ListItemListener
 ):
     RecyclerView.Adapter<IngredientsListAdapter.ViewHolder>() {
-//    var favourite: FavouriteEntity? = null
-//    var isFavourite: Boolean = false
     inner class ViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         var binding = IngredientListItemBinding.bind(itemView)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        var inflater = LayoutInflater.from(parent.context)
-        var view = inflater.inflate(R.layout.ingredient_list_item, parent, false)
+        val inflater = LayoutInflater.from(parent.context)
+        val view = inflater.inflate(R.layout.ingredient_list_item, parent, false)
         return ViewHolder(view)
     }
 
@@ -52,6 +50,8 @@ class IngredientsListAdapter (
                         // They come in the form of strings literally with the word 'null' because I'm using optString in viewfragment's raw json parsing method to ensure a string is always returned
                         if(ingredient.first != "null") {measureText.text = ingredient.first}
 
+                        // Each ingredient has an associated image, we pass this endpoint to the Picasso library, which loads an image from the URL
+                        // Picasso handles errors for us by adding a placeholder
                         Picasso.get()
                             .load("https://www.thecocktaildb.com/images/ingredients/${ingredientText.text}.png")
                             .error(R.drawable.ic_launcher_background).resize(50, 50).centerInside()

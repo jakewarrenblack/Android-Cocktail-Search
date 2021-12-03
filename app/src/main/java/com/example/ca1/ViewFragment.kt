@@ -29,7 +29,6 @@ class ViewFragment : Fragment(),
 
     IngredientsListAdapter.ListItemListener
     {
-
         private lateinit var viewModel: ViewViewModel
         // 'by' operator allows for lazy evaluation
         private val args: ViewFragmentArgs by navArgs()
@@ -53,7 +52,6 @@ class ViewFragment : Fragment(),
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
         ): View? {
-
 
             // get a reference to the activity which owns this fragment
             (activity as AppCompatActivity).supportActionBar?.let {
@@ -79,8 +77,6 @@ class ViewFragment : Fragment(),
                     context, LinearLayoutManager(context).orientation
                 )
             }
-
-
 
             // use this binding to update the TextView
             // set the text of the cocktail's TextView
@@ -108,13 +104,9 @@ class ViewFragment : Fragment(),
             mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
             mainViewModel.getFullJson(args.cocktailId)
 
-
-
-
             binding.favouriteButton.setOnClickListener {
                 saveFavourite();
             }
-
 
             // I need to get information back from this coroutine
             mainViewModel.currentFavourite.observe(viewLifecycleOwner, Observer {
@@ -128,7 +120,7 @@ class ViewFragment : Fragment(),
                 }
             })
 
-            mainViewModel.json.observe(viewLifecycleOwner, Observer {
+            mainViewModel.json.observe(viewLifecycleOwner, Observer { it ->
                 with(it) {
                     responseJson = it
                     var jsonArray = JSONObject(responseJson)
@@ -147,18 +139,25 @@ class ViewFragment : Fragment(),
                             if (singleDrink.optString("strIngredient$i") != "null") {
                                 if (it.toString().contains("strIngredient")) {
                                     val ingredient = singleDrink.optString("strIngredient$i")
-
                                     val idDrink = singleDrink.optString("idDrink")
-
                                     val measure = singleDrink.optString("strMeasure$i")
+
                                     // optString returns null if nothing there, literally 'null' in string format
+
                                     // if this isn't possible, it will return an empty string, so check against this,
                                     // keeping in mind that we can have an empty measure with an ingredient
                                     // eg sugar may not have a measure, it's just 'to taste'
                                     // so we allow 'null' measures
-
                                     if(ingredient.isNotBlank() && idDrink.isNotBlank()){
-                                        ingredients.put(measure, ingredient)
+                                        // Now we've created our map of measures and ingredients,
+                                        // We add it to our ingredients list and pass it through to the ingredients adapter
+                                            viewModel.getIngredientDetailsById(idDrink.toInt())
+                                            viewModel.ingredientDetails.observe(viewLifecycleOwner, Observer{
+                                                Log.i("Ingredient details: ", it.toString())
+                                            })
+
+
+                                            ingredients.put(measure, ingredient)
                                     }
                                 }
                             }
@@ -173,20 +172,15 @@ class ViewFragment : Fragment(),
 
                         spinner.visibility = View.GONE;
                     }
-
-                    // assign this list to the cocktail now...
-                    // cocktailItems!![j].ingredients = ingredients
                 }
             })
 
             val myCustomFont : Typeface? = getActivity()?.let { ResourcesCompat.getFont(it, R.font.lobster_regular) }
             binding.cocktailText.typeface = myCustomFont
 
-
             // we've already inflated the layout, so we'll just return the binding.root instead of returning the inflated layout
             return binding.root
         }
-
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
             return when (item.itemId) {
@@ -237,7 +231,5 @@ class ViewFragment : Fragment(),
                     )
                 )
             }
-
-            //})
         }
     }
