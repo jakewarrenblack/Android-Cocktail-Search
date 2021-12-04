@@ -56,6 +56,10 @@
             android:name="cocktailImage"
             app:argType="string"
             android:defaultValue="None" />
+        <argument
+            android:name="fragmentname"
+            app:argType="string"
+            android:defaultValue="None" />
         <action
             android:id="@+id/action_viewFragment_to_ingredientsFragment"
             app:destination="@id/ingredientsFragment"
@@ -75,6 +79,7 @@
             app:destination="@id/viewFragment"
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
 
     </fragment>

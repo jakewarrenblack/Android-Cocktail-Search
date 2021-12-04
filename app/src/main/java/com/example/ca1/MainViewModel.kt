@@ -69,7 +69,7 @@ class MainViewModel (app: Application) : AndroidViewModel(app) {
             withContext(Dispatchers.IO) {
                 _isLoading.postValue(true)
             val fetchedCocktails = RetrofitInstance.api.getCocktails(searchQuery).drinks
-            Log.i(TAG, "Fetched cocktails: $fetchedCocktails")
+            //Log.i(TAG, "Fetched cocktails: $fetchedCocktails")
             _cocktails.postValue(fetchedCocktails)
 
                 val favourite =

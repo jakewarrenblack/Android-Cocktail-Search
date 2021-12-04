@@ -36,6 +36,12 @@ class FavouritesViewModel (app: Application) : AndroidViewModel(app) {
         getFavourites()
     }
 
+    fun clearFavourites(){
+        viewModelScope.launch{
+            _favourites.postValue(null)
+        }
+    }
+
 
     fun getFavourites(){
         viewModelScope.launch {

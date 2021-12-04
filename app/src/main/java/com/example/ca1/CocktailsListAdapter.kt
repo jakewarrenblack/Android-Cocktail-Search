@@ -80,7 +80,7 @@ class CocktailsListAdapter(
             root.setOnClickListener{
                 // and this is the unique ID for that piece of data
                 if (cocktail != null) {
-                    listener.onItemClick(cocktail.idDrink, cocktail.strDrink, cocktail.strInstructions, cocktail.strDrinkThumb)
+                    listener.onItemClick(cocktail.idDrink, cocktail.strDrink, cocktail.strInstructions, cocktail.strDrinkThumb, "mainFragment")
                 }
             }
 
@@ -109,7 +109,7 @@ class CocktailsListAdapter(
     // set up a relationship between the data item being clicked and the fragment in which the data is displayed
     interface ListItemListener {
         // passing the current cocktail ID
-        fun onItemClick(cocktailId: Int, cocktailName: String, cocktailInstructions: String, cocktailImage: String)
+        fun onItemClick(cocktailId: Int, cocktailName: String, cocktailInstructions: String, cocktailImage: String, fragmentName: String)
         // We can build favourite entities using cocktail information, they're have the same properties
         fun onSaveClick(cocktail: Cocktail, isFavourite: Boolean, adapterFavouriteId: Int?, position: Int)
     }

@@ -51,7 +51,7 @@ class FavouritesListAdapter(
             root.setOnClickListener{
                 // and this is the unique ID for that piece of data
                 if (favourite != null) {
-                    listener.onItemClick(favourite.id, favourite.strDrink, favourite.strInstructions, favourite.strDrinkThumb)
+                    listener.onItemClick(favourite.id, favourite.strDrink, favourite.strInstructions, favourite.strDrinkThumb, "favouritesFragment")
                 }
             }
 
@@ -85,7 +85,7 @@ class FavouritesListAdapter(
 
     interface ListItemListener {
         // passing the current cocktail ID
-        fun onItemClick(cocktailId: Int, cocktailName: String, cocktailInstructions: String, cocktailImage: String)
+        fun onItemClick(cocktailId: Int, cocktailName: String, cocktailInstructions: String, cocktailImage: String, fragmentName: String)
         fun onSaveClick(favourite: FavouriteEntity, isFavourite: Boolean, adapterFavouriteId: Int?, position: Int)
     }
 }

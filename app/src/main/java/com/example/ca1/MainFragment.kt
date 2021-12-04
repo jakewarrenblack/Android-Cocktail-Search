@@ -106,7 +106,7 @@ class MainFragment : Fragment(),
 
                 if(cocktailItems?.isNotEmpty() == true) {
                     if (cocktailItems != null && favouriteItems != null) {
-                        Log.i("CocktailLogging:", it.toString())
+                        //Log.i("CocktailLogging:", it.toString())
 
                         adapter =
                             CocktailsListAdapter(cocktailItems, favouriteItems, this@MainFragment)
@@ -126,10 +126,10 @@ class MainFragment : Fragment(),
             })
         return binding.root
     }
-    override fun onItemClick(cocktailId: Int, cocktailName: String, cocktailInstructions: String, cocktailImage: String) {
+    override fun onItemClick(cocktailId: Int, cocktailName: String, cocktailInstructions: String, cocktailImage: String, fragmentName: String) {
         Log.i(TAG, "onItemClick: received cocktail id $cocktailId")
         // sending data from MainFragment to ViewFragment
-        val action = MainFragmentDirections.actionViewCocktail(cocktailId, cocktailName, cocktailInstructions, cocktailImage)
+        val action = MainFragmentDirections.actionViewCocktail(cocktailId, cocktailName, cocktailInstructions, cocktailImage, fragmentName)
         // get a reference to the navigation host, passing in a strongly typed value (an int)
         // means we don't have to interpret the passed data on the other side,
         //  there's no risk of us messing it up because it's now strongly typed

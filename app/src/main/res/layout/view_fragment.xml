@@ -14,18 +14,6 @@
         android:paddingHorizontal="15dp"
         android:orientation="vertical">
 
-        <ProgressBar
-            android:id="@+id/progressBar2"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            app:layout_constraintBottom_toBottomOf="@+id/mainRecyclerView"
-            app:layout_constraintEnd_toEndOf="@+id/mainRecyclerView"
-            app:layout_constraintStart_toStartOf="@+id/mainRecyclerView"
-            app:layout_constraintTop_toTopOf="@+id/mainRecyclerView"
-            tools:ignore="MissingConstraints" />
-
         <TextView
             android:id="@+id/cocktailText"
             android:textColor="@color/raisinBlack"

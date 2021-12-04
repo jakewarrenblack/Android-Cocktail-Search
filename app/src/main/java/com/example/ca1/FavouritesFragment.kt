@@ -24,6 +24,10 @@ import com.example.ca1.model.Cocktail
 
 class FavouritesFragment : Fragment(),
     FavouritesListAdapter.ListItemListener{
+    companion object {
+        fun newInstance() = FavouritesFragment()
+    }
+
     private lateinit var viewModel: FavouritesViewModel
     private lateinit var binding: FavouritesFragmentBinding
     private lateinit var adapter: FavouritesListAdapter
@@ -31,10 +35,35 @@ class FavouritesFragment : Fragment(),
     var cocktailItems: List<Cocktail>? = null
     var favouriteItems: MutableList<FavouriteEntity?>? = null
 
+    override fun onResume() {
+        super.onResume()
+        favouriteItems = null
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        /*
+        "When an activity is popped off the stack by navigating back,
+        it doesn't retain any of its views or state.
+        The activity object and all its views and state are destroyed."
+
+        This presents a problem for us when trying to ensure an item is removed
+        from the recyclerview when the user unsaves it from the viewfragment side.
+
+        We pass the cocktail position through when an item is clicked so the viewfragment has a reference to it,
+        and then if the user clicks unsave from the viewfragment, we pass this integer back up the stack,
+        and get our favouritesfragment to retrieve it on load,
+
+        now we can make sure this item is removed from the newly created adapter
+
+        // TODO:
+        WE ALSO NEED TO FIGURE OUT PASSING A FAVOURITE OBJECT,
+        THE POSITION WILL ONLY SERVE TO REMOVE IT FROM THE UI, WITHOUT ACTUALLY UPDATING THE DB
+         */
+
 
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         binding = FavouritesFragmentBinding.inflate(inflater, container, false)
@@ -80,15 +109,19 @@ class FavouritesFragment : Fragment(),
         return binding.root
     }
 
-    override fun onItemClick(cocktailId: Int, cocktailInstructions: String, cocktailName: String, cocktailImage: String) {
+    // Position is used to get a reference to where in the list this specific item is, that means we can update the UI even from the single view page
+    override fun onItemClick(cocktailId: Int, cocktailInstructions: String, cocktailName: String, cocktailImage: String, fragmentName: String) {
         Log.i(TAG, "onItemClick: received cocktail id $cocktailId")
-        val action = FavouritesFragmentDirections.actionViewCocktail(cocktailId, cocktailInstructions, cocktailName, cocktailImage)
+
+
+
+        val action = FavouritesFragmentDirections.actionViewCocktail(cocktailId, cocktailInstructions, cocktailName, cocktailImage, fragmentName)
         findNavController().navigate(action)
     }
 
     override fun onSaveClick(favourite: FavouriteEntity, isFavourite: Boolean, adapterFavouriteId: Int?, position: Int) {
         // In the MainFragment we have an if statement to check if the cocktail is an existing favourite, but in this case we know it is, because we're looking at a list of FavouriteEntities
-            Log.i("FavouriteExistence", "Rremoving favourite: ${favourite.id} / adapterfavourite: $adapterFavouriteId")
+            Log.i("FavouriteExistence", "Removing favourite: ${favourite.id} / adapterfavourite: $adapterFavouriteId")
             favouriteItems?.remove(favourite)
             viewModel.removeFavourite(favourite)
             binding.favouritesRecyclerView.removeViewAt(position)

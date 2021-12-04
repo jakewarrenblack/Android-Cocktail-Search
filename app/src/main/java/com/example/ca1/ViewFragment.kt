@@ -14,18 +14,33 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.Observer
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.example.ca1.IngredientsFragment.Companion.newInstance
 import com.example.ca1.data.FavouriteEntity
+import com.example.ca1.databinding.FavouritesFragmentBinding
 import com.example.ca1.databinding.ViewFragmentBinding
 import com.example.ca1.model.Ingredient
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.processNextEventInCurrentThread
 import org.json.JSONArray
 import org.json.JSONObject
+import android.os.Build
+
+
+import androidx.navigation.fragment.NavHostFragment
+
+import androidx.navigation.Navigation
+
+import androidx.navigation.NavController
+
+
+
+
 
 class ViewFragment : Fragment(),
 
@@ -40,6 +55,10 @@ class ViewFragment : Fragment(),
         // I want to observe the result of the getFavourites function in here, need a reference to it
         private lateinit var viewViewModel: ViewViewModel
 
+        private lateinit var favouritesViewModel: FavouritesViewModel
+
+        private lateinit var favouritesFragmentBinding: FavouritesFragmentBinding
+
         private lateinit var mainViewModel: MainViewModel
 
         private lateinit var responseJson: String
@@ -49,6 +68,7 @@ class ViewFragment : Fragment(),
         private lateinit var spinner: ProgressBar
 
         private lateinit var myJson: String
+
 
         override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -67,9 +87,10 @@ class ViewFragment : Fragment(),
 
             // initialise the binding
             binding = ViewFragmentBinding.inflate(inflater, container, false);
-            spinner = binding.progressBar2
+            favouritesFragmentBinding = FavouritesFragmentBinding.inflate(inflater, container, false)
+            //spinner = binding.progressBar2
 
-            spinner.visibility = View.VISIBLE;
+            //spinner.visibility = View.VISIBLE;
 
             with(binding.ingredientsRecyclerView) {
                 // height of each row same regardless of contents
@@ -103,7 +124,11 @@ class ViewFragment : Fragment(),
             )
 
             viewViewModel = ViewModelProvider(this).get(ViewViewModel::class.java)
+
             mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+
+            favouritesViewModel = ViewModelProvider(this).get(FavouritesViewModel::class.java)
+
             mainViewModel.getFullJson(args.cocktailId)
 
             binding.favouriteButton.setOnClickListener {
@@ -163,7 +188,7 @@ class ViewFragment : Fragment(),
                         adapter = IngredientsListAdapter(ingredients, this@ViewFragment)
                         binding.ingredientsRecyclerView.adapter = adapter
                         binding.ingredientsRecyclerView.layoutManager = LinearLayoutManager(activity)
-                        spinner.visibility = View.GONE;
+                        //spinner.visibility = View.GONE;
                     }
                 }
             })
@@ -183,8 +208,36 @@ class ViewFragment : Fragment(),
         }
 
         private fun saveAndReturn(): Boolean {
-            findNavController().navigateUp()
-            return true
+            // Instead of just navigating up, I'm telling the nav controller to create a new reference to the
+            // favouritesFragment and navigate to it, ensures the view is re-inflated and viewmodel made again,
+            // so if we've unsaved a favourite from here, the adapter will get fresh data and change accordingly
+
+            // We also have to manually apply the animations, if we didn't they wouldn't happen
+
+            // We *were* just using navigation.navigateUp, but in this case it seemed like the FavouritesFragment was just being *resumed* rather than recreated,
+            // which is what we want, to make sure the list is updated if it's changed from the ViewFragment (in here)
+
+            // Had to add argument field to pass the name of the fragment
+            // Without this check, we'd navigate back to the favourites fragment every time, even when only viewing a cocktail on the MainFragment
+            // This problem arose because MainFragment and FavouritesFragment both link through to the same ViewFragment
+            if(args.fragmentname.toLowerCase() == "mainfragment") {
+                findNavController().navigateUp()
+                return true
+            }
+            else{
+                val navBuilder = NavOptions.Builder()
+                navBuilder
+                    .setEnterAnim(android.R.anim.slide_in_left)
+                    .setExitAnim(android.R.anim.slide_out_right)
+                    .setPopEnterAnim(android.R.anim.slide_in_left)
+                    .setPopExitAnim(android.R.anim.slide_out_right)
+                    .setPopUpTo(R.id.favouritesFragment, true)
+
+                NavHostFragment.findNavController(this@ViewFragment)
+                    .navigate(R.id.favouritesFragment, arguments, navBuilder.build())
+
+                return true
+            }
         }
 
         override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -211,6 +264,7 @@ class ViewFragment : Fragment(),
                         args.cocktailImage
                     )
                 )
+
             } else {
                 Log.i("Favourite", "Cocktail does not already exist, saving")
                 // If this cocktailId does not already correspond with an existing favourite
