@@ -121,11 +121,13 @@ class FavouritesFragment : Fragment(),
 
     override fun onSaveClick(favourite: FavouriteEntity, isFavourite: Boolean, adapterFavouriteId: Int?, position: Int) {
         // In the MainFragment we have an if statement to check if the cocktail is an existing favourite, but in this case we know it is, because we're looking at a list of FavouriteEntities
-            Log.i("FavouriteExistence", "Removing favourite: ${favourite.id} / adapterfavourite: $adapterFavouriteId")
+            Log.i("FavouriteExistence", "Removing favourite: ${favourite.id} ${ favourite.strDrink} / adapterfavourite: $adapterFavouriteId")
+
+            // The order of these is important, if we removed the favourite and updated the adapter's data, the view at this position would be removed, and the app would crash on a null pointer exception
+            binding.favouritesRecyclerView.removeViewAt(position)
+
             favouriteItems?.remove(favourite)
             viewModel.removeFavourite(favourite)
-            binding.favouritesRecyclerView.removeViewAt(position)
-            //adapter = FavouritesListAdapter(favouriteItems, this@FavouritesFragment)
 
             adapter.notifyItemRemoved(position);
 
@@ -133,8 +135,5 @@ class FavouritesFragment : Fragment(),
             if(favouriteItems?.isEmpty() == true){
                 binding.noFavouritesSaved.visibility = View.VISIBLE
             }
-            //adapter.notifyItemRangeChanged(position, favouriteItems?.size!!);
-            //adapter.notifyDataSetChanged()
-
     }
 }

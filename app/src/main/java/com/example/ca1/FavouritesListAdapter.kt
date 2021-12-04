@@ -55,11 +55,14 @@ class FavouritesListAdapter(
                 }
             }
 
+
 //            favouriteToggle.isChecked = favourite != null
 //
             favouriteToggle.setOnClickListener{
                     if (favourite != null) {
-                        listener.onSaveClick(favourite, isFavourite, favourite.id, position)
+                        // It's important that we use holder.layoutPosition instead of adapterPosition
+                        // we only get adapterPosition once at binding, we want the dynamic layoutPosition to be passed to the UI to ensure we're clicking on the right value
+                        listener.onSaveClick(favourite, isFavourite, favourite.id, holder.layoutPosition)
                     }
             }
         }
