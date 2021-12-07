@@ -2,6 +2,8 @@ package com.example.ca1
 
 import android.content.Context
 import android.graphics.Typeface
+import android.os.Bundle
+import android.os.Parcel
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,12 +16,12 @@ import com.bumptech.glide.Glide
 import com.example.ca1.data.FavouriteEntity
 
 class CocktailsListAdapter(
-    private val cocktailsList: List<Cocktail>?,
+    private val cocktailsList: ArrayList<Bundle>?,
     private var favouritesList: MutableList<FavouriteEntity?>?,
     // this listener object is a reference to the fragment that is calling the adapter
     private val listener: ListItemListener,
 
-) :
+    ) :
     // This is the ViewHolder definition,
     // which is extended off of our RecyclerView.
     // The ViewHolder then wraps around a View, which is managed by the RecyclerView
@@ -54,10 +56,13 @@ class CocktailsListAdapter(
     // So in our case, we're finding the appropriate cocktail name in the list and displaying it in the list item's TextView widget.
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val cocktail = cocktailsList?.get(holder.adapterPosition)
+        val cocktailFromBundle = cocktail?.getParcelable<Cocktail>("cocktail")
 
         // Assign the value of the current favourite (which is initially null) to use the same properties as the cocktail where the IDs are the same
         if(!favouritesList?.isEmpty()!! && cocktail != null){
-            favourite = getFavourite(cocktail.idDrink)
+            if (cocktailFromBundle != null) {
+                favourite = getFavourite(cocktailFromBundle.idDrink)
+            }
         }
 
         // Setting a custom font
@@ -67,10 +72,14 @@ class CocktailsListAdapter(
         // this 'with' block means we can refer to lots of stuff inside the binding
         with(holder.binding) {
             if (cocktail != null) {
-                Glide.with(root).load(cocktail.strDrinkThumb).centerCrop().into(imageView)
+                if (cocktailFromBundle != null) {
+                    Glide.with(root).load(cocktailFromBundle.strDrinkThumb).centerCrop().into(imageView)
+                }
             }
             if (cocktail != null) {
-                cocktailText.text = cocktail.strDrink
+                if (cocktailFromBundle != null) {
+                    cocktailText.text = cocktailFromBundle.strDrink
+                }
 
             }
             // in here we already have a reference to the binding
@@ -80,7 +89,9 @@ class CocktailsListAdapter(
             root.setOnClickListener{
                 // and this is the unique ID for that piece of data
                 if (cocktail != null) {
-                    listener.onItemClick(cocktail.idDrink, cocktail.strDrink, cocktail.strInstructions, cocktail.strDrinkThumb, "mainFragment")
+                    if (cocktailFromBundle != null) {
+                        listener.onItemClick(cocktailFromBundle, "mainFragment")
+                    }
                 }
             }
 
@@ -91,7 +102,9 @@ class CocktailsListAdapter(
 
             favouriteToggle.setOnClickListener{
                 if (cocktail != null) {
-                    listener.onSaveClick(cocktail, isFavourite, favourite?.id, position)
+                    if (cocktailFromBundle != null) {
+                        listener.onSaveClick(cocktailFromBundle, isFavourite, favourite?.id, position)
+                    }
                 }
             }
         }
@@ -109,7 +122,7 @@ class CocktailsListAdapter(
     // set up a relationship between the data item being clicked and the fragment in which the data is displayed
     interface ListItemListener {
         // passing the current cocktail ID
-        fun onItemClick(cocktailId: Int, cocktailName: String, cocktailInstructions: String, cocktailImage: String, fragmentName: String)
+        fun onItemClick(cocktail: Cocktail, fragmentName: String)
         // We can build favourite entities using cocktail information, they're have the same properties
         fun onSaveClick(cocktail: Cocktail, isFavourite: Boolean, adapterFavouriteId: Int?, position: Int)
     }

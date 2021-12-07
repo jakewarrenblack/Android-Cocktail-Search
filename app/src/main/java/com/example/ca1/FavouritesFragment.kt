@@ -110,12 +110,12 @@ class FavouritesFragment : Fragment(),
     }
 
     // Position is used to get a reference to where in the list this specific item is, that means we can update the UI even from the single view page
-    override fun onItemClick(cocktailId: Int, cocktailInstructions: String, cocktailName: String, cocktailImage: String, fragmentName: String) {
-        Log.i(TAG, "onItemClick: received cocktail id $cocktailId")
+    override fun onItemClick(cocktail: Cocktail, fragmentName: String) {
+        //Log.i(TAG, "onItemClick: received cocktail id $cocktailId")
 
 
 
-        val action = FavouritesFragmentDirections.actionViewCocktail(cocktailId, cocktailInstructions, cocktailName, cocktailImage, fragmentName)
+        val action = FavouritesFragmentDirections.actionViewCocktail(cocktail, fragmentName)
         findNavController().navigate(action)
     }
 

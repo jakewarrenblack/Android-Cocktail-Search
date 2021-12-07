@@ -2,6 +2,7 @@ package com.example.ca1
 
 import android.graphics.Typeface
 import android.os.Bundle
+import android.os.Parcel
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import android.widget.SearchView
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
@@ -44,6 +46,9 @@ class MainFragment : Fragment(),
     private lateinit var spinner: ProgressBar
     var cocktailItems: List<Cocktail>? = null
     var favouriteItems: MutableList<FavouriteEntity?>? = null
+    var jsonItems: String = ""
+
+    val list = arrayListOf<Bundle>()
 
     private lateinit var responseJson: String
 
@@ -61,8 +66,17 @@ class MainFragment : Fragment(),
 
         // It's important to obtain an instance of the viewModel during view creation
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        val liveData = viewModel.fetchData()
+
+
+        //*********************************
+        //TODO: ** I need to make the second call based on the value of the first one **
         viewModel.getCocktails(searchQuery)
+        //viewModel.getFullJson(searchQuery)
+
+        //*********************************
+
+        val liveData = viewModel.fetchData()
+
         //viewModel.getFullJson(searchQuery)
 
 
@@ -98,22 +112,59 @@ class MainFragment : Fragment(),
         // Instead, the data is passed through the view models.
         liveData.observe(viewLifecycleOwner,
             { it ->
-
                 when(it){
                     is MergedData.CocktailData -> cocktailItems = it.cocktailItems
                     is MergedData.FavouriteData -> favouriteItems = it.favouriteItems
+                    is MergedData.jsonData -> jsonItems = it.jsonItems
                 }
 
                 if(cocktailItems?.isNotEmpty() == true) {
-                    if (cocktailItems != null && favouriteItems != null) {
-                        //Log.i("CocktailLogging:", it.toString())
+                    if (cocktailItems != null && jsonItems.isNotEmpty()) {
+                        // Now we have both the cocktails and the json, we have to loop through the cocktails and get ingredient details for each of them, pass into adapter then,
+                        // and the adapter's onclick interface will then pass it through to the viewfragment as arguments
+                        // where we can observe just one piece of data (ingredientDetails) to pass into the ingredientsListAdapter
+                        var jsonArray = JSONObject(jsonItems)
 
-                        adapter =
-                            CocktailsListAdapter(cocktailItems, favouriteItems, this@MainFragment)
-                        binding.mainRecyclerView.adapter = adapter
-                        binding.mainRecyclerView.layoutManager = LinearLayoutManager(activity)
-                        //                    liveData.removeObserver(this)
+
+
+                        var j: Int = -1
+                        for(cocktail in cocktailItems!!){
+                            j++
+                            val drinksObject: JSONArray = jsonArray.getJSONArray("drinks")
+                            val singleDrink = drinksObject.getJSONObject(j)
+                            //var ingredients = mutableMapOf<String, String>()
+                            var i: Int = 0
+                            while (i < 15) {
+                                i++
+                                with(it) {
+                                    if (singleDrink.optString("strIngredient$i") != "null") {
+                                        if (it.toString().contains("strIngredient")) {
+                                            val ingredient = singleDrink.optString("strIngredient$i")
+                                            val idDrink = singleDrink.optString("idDrink")
+                                            val measure = singleDrink.optString("strMeasure$i")
+
+                                            if(ingredient.isNotBlank() && idDrink.isNotBlank()){
+                                                cocktail.ingredients = bundleOf("measure" to measure,"ingredient" to ingredient)
+
+                                                val bundle = Bundle()
+                                                val parcel = Cocktail(cocktail.idDrink, cocktail.strDrink, cocktail.strInstructions, cocktail.strDrinkThumb, cocktail.ingredients)
+                                                bundle.putParcelable("cocktail", parcel)
+
+                                                list.add(bundle)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (cocktailItems!!.isNotEmpty()) {
+
+                                adapter = CocktailsListAdapter(list, favouriteItems, this@MainFragment)
+                                binding.mainRecyclerView.adapter = adapter
+                                binding.mainRecyclerView.layoutManager = LinearLayoutManager(activity)
+                            }
+                        }
                     }
+
                 }else{
                     binding.noCocktailsFound.visibility = View.VISIBLE
                 }
@@ -126,10 +177,10 @@ class MainFragment : Fragment(),
             })
         return binding.root
     }
-    override fun onItemClick(cocktailId: Int, cocktailName: String, cocktailInstructions: String, cocktailImage: String, fragmentName: String) {
-        Log.i(TAG, "onItemClick: received cocktail id $cocktailId")
+    override fun onItemClick(cocktail: Cocktail, fragmentName: String) {
+       // Log.i(TAG, "onItemClick: received cocktail id $cocktailId")
         // sending data from MainFragment to ViewFragment
-        val action = MainFragmentDirections.actionViewCocktail(cocktailId, cocktailName, cocktailInstructions, cocktailImage, fragmentName)
+        val action = MainFragmentDirections.actionViewCocktail(cocktail, fragmentName)
         // get a reference to the navigation host, passing in a strongly typed value (an int)
         // means we don't have to interpret the passed data on the other side,
         //  there's no risk of us messing it up because it's now strongly typed
@@ -143,7 +194,7 @@ class MainFragment : Fragment(),
             Log.i("FavouriteExistence", "Cocktail already exists, unsaving : ${cocktail.idDrink} / adapterfavourite: $adapterFavouriteId")
             favouriteItems?.remove(FavouriteEntity(cocktail.idDrink, cocktail.strDrink, cocktail.strInstructions, cocktail.strDrinkThumb))
             viewModel.removeFavourite(FavouriteEntity(cocktail.idDrink, cocktail.strDrink, cocktail.strInstructions, cocktail.strDrinkThumb))
-            adapter = CocktailsListAdapter(cocktailItems,favouriteItems, this@MainFragment)
+            adapter = CocktailsListAdapter(list,favouriteItems, this@MainFragment)
 
             //adapter.notifyItemChanged(position);
             //adapter.notifyDataSetChanged()
@@ -153,7 +204,7 @@ class MainFragment : Fragment(),
             // If this cocktailId does not already correspond with an existing favourite
             favouriteItems?.add(FavouriteEntity(cocktail.idDrink, cocktail.strDrink, cocktail.strInstructions, cocktail.strDrinkThumb))
             viewModel.saveFavourite(FavouriteEntity(cocktail.idDrink, cocktail.strDrink, cocktail.strInstructions, cocktail.strDrinkThumb))
-            adapter = CocktailsListAdapter(cocktailItems,favouriteItems, this@MainFragment)
+            adapter = CocktailsListAdapter(list,favouriteItems, this@MainFragment)
 //            adapter.notifyItemChanged(position);
 //            adapter.notifyDataSetChanged()
 

@@ -109,21 +109,21 @@ class ViewViewModel (app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun getFullJson(searchQuery: Int?){
-        viewModelScope.launch {
-            RetrofitInstance.api.getCocktailsJson(searchQuery).enqueue(object:
-                Callback<ResponseBody> {
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    //handle error here
-                }
-
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    //your raw string response
-                    val stringResponse = response.body()?.string()
-                    _json.postValue(stringResponse)
-                }
-
-            })
-        }
-    }
+//    fun getFullJson(searchQuery: Int?){
+//        viewModelScope.launch {
+//            RetrofitInstance.api.getCocktailsJson(searchQuery).enqueue(object:
+//                Callback<ResponseBody> {
+//                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+//                    //handle error here
+//                }
+//
+//                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+//                    //your raw string response
+//                    val stringResponse = response.body()?.string()
+//                    _json.postValue(stringResponse)
+//                }
+//
+//            })
+//        }
+//    }
 }

@@ -142,11 +142,19 @@ class MainViewModel (app: Application) : AndroidViewModel(app) {
         liveDataMerger.addSource(cocktails) {
             if (it != null) {
                 liveDataMerger.value = MergedData.CocktailData(it)
+                for(cocktail in it){
+                    getFullJson(cocktail.idDrink)
+                }
             }
         }
         liveDataMerger.addSource(favourites) {
             if (it != null) {
                 liveDataMerger.value = MergedData.FavouriteData(it)
+            }
+        }
+        liveDataMerger.addSource(json) {
+            if (it.isNotEmpty()) {
+                liveDataMerger.value = MergedData.jsonData(it)
             }
         }
         return liveDataMerger
