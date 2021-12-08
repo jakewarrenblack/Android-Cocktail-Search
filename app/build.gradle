@@ -90,4 +90,8 @@ dependencies {
     // Used for loading ingredient images
     implementation 'com.squareup.picasso:picasso:2.71828'
 
+    // For moshi converter
+    implementation 'com.squareup.moshi:moshi-kotlin:1.12.0'
+    implementation 'com.squareup.moshi:moshi-adapters:1.12.0'
+
 }

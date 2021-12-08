@@ -6,15 +6,21 @@ package com.example.ca1.model
 import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.core.os.bundleOf
 
-data class Cocktail(val idDrink: Int, val strDrink: String, val strInstructions: String, val strDrinkThumb: String, var ingredients: Map<String, String>)
+data class Cocktail(val idDrink: Int,
+                    val strDrink: String,
+                    val strInstructions: String,
+                    val strDrinkThumb: String,
+                    @Transient
+                    var ingredients: MutableMap<String, String>? = null
+                )
     : Parcelable {
         constructor(parcel: Parcel): this(
             parcel.readInt()!!,
             parcel.readString()!!,
             parcel.readString()!!,
             parcel.readString()!!,
-            parcel.readMap()
         )
 
     override fun writeToParcel(parcel: Parcel?, flags: Int) {
@@ -22,7 +28,6 @@ data class Cocktail(val idDrink: Int, val strDrink: String, val strInstructions:
         parcel?.writeString(strDrink)
         parcel?.writeString(strInstructions)
         parcel?.writeString(strDrinkThumb)
-        parcel?.writeBundle(ingredients)
     }
 
     override fun describeContents(): Int {

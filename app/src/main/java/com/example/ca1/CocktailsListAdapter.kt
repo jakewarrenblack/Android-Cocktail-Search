@@ -16,7 +16,7 @@ import com.bumptech.glide.Glide
 import com.example.ca1.data.FavouriteEntity
 
 class CocktailsListAdapter(
-    private val cocktailsList: ArrayList<Bundle>?,
+    private val cocktailsList: MutableList<Bundle>?,
     private var favouritesList: MutableList<FavouriteEntity?>?,
     // this listener object is a reference to the fragment that is calling the adapter
     private val listener: ListItemListener,
