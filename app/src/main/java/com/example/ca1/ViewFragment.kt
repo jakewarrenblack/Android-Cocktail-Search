@@ -30,6 +30,7 @@ import kotlinx.coroutines.processNextEventInCurrentThread
 import org.json.JSONArray
 import org.json.JSONObject
 import android.os.Build
+import androidx.core.os.bundleOf
 
 
 import androidx.navigation.fragment.NavHostFragment
@@ -37,6 +38,8 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.Navigation
 
 import androidx.navigation.NavController
+import com.example.ca1.api.RetrofitInstance
+import com.example.ca1.data.MergedData
 import com.example.ca1.model.Cocktail
 
 class ViewFragment : Fragment(),
@@ -52,6 +55,8 @@ class ViewFragment : Fragment(),
         // I want to observe the result of the getFavourites function in here, need a reference to it
         private lateinit var viewViewModel: ViewViewModel
 
+        private lateinit var ingredientsForLooping: MutableMap<String, String>
+
         private lateinit var favouritesViewModel: FavouritesViewModel
 
         private lateinit var favouritesFragmentBinding: FavouritesFragmentBinding
@@ -66,12 +71,26 @@ class ViewFragment : Fragment(),
 
         private lateinit var myJson: String
 
+        private lateinit var ingredients: MutableMap<String, String>
+
+        private var ingredientsWithDescriptions: List<Ingredient?>? = mutableListOf()
+
+        var currentFavouriteItem: FavouriteEntity? = null
+        var ingredientItems: List<Ingredient?>? = null
+
 
         override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
         ): View? {
+
+            viewViewModel = ViewModelProvider(this).get(ViewViewModel::class.java)
+
             val cocktail: Cocktail = args.cocktail
+
+            // Iterators need non-nullable values
+            ingredients = args.cocktail.ingredients!!
+            val liveData = viewViewModel.fetchData(ingredients)
 
             // get a reference to the activity which owns this fragment
             (activity as AppCompatActivity).supportActionBar?.let {
@@ -121,8 +140,6 @@ class ViewFragment : Fragment(),
                 }
             )
 
-            viewViewModel = ViewModelProvider(this).get(ViewViewModel::class.java)
-
             mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
             favouritesViewModel = ViewModelProvider(this).get(FavouritesViewModel::class.java)
@@ -133,63 +150,46 @@ class ViewFragment : Fragment(),
                 saveFavourite();
             }
 
-            // I need to get information back from this coroutine
-            mainViewModel.currentFavourite.observe(viewLifecycleOwner, Observer {
-                // If no existing cocktail is returned from the local storage DB
-                if (mainViewModel.currentFavourite.value == null) {
-                    binding.favouriteButton.text = "Not saved"
-                    //binding.hasBeenFavouritedIndicator.text = "Not saved";
-                } else {
-                    binding.favouriteButton.text = "Saved!"
-                    //binding.hasBeenFavouritedIndicator.text = "Saved!"
-                }
-            })
+            // When we've finished populating the list of ingredient details in the viewviewmodel
+                liveData.observe(viewLifecycleOwner,
+                    { it ->
+                        when (it) {
+                            is MergedData.CurrentFavouriteData -> currentFavouriteItem =
+                                it.currentFavouriteItem
+                            is MergedData.IngredientsData -> ingredientItems = it.ingredientItems
+                        }
 
-//            mainViewModel.json.observe(viewLifecycleOwner, Observer { it ->
-//                with(it) {
-//                    responseJson = it
-//                    var jsonArray = JSONObject(responseJson)
-//                    val drink: JSONObject
-//                    val drinksObject: JSONArray = jsonArray.getJSONArray("drinks")
+                        if (currentFavouriteItem == null) {
+                            binding.favouriteButton.text = "Not saved"
+                        } else {
+                            binding.favouriteButton.text = "Saved!"
+                        }
+
+                        if (ingredientItems != null) {
+                            ingredientsWithDescriptions = ingredientItems
+                        }
+
+
+                        adapter = args.cocktail.ingredients?.let {
+                            ingredientsWithDescriptions?.let { it1 ->
+                                IngredientsListAdapter(
+                                    it,
+                                    it1, this@ViewFragment
+                                )
+                            }
+                        }!!
+                        binding.ingredientsRecyclerView.adapter = adapter
+                        binding.ingredientsRecyclerView.layoutManager =
+                            LinearLayoutManager(activity)
 //
-//                    // just get first drink, response is single
-//                    val singleDrink = drinksObject.getJSONObject(0)
-//                    // We loop through and fill this list
-//                    var ingredients = mutableMapOf<String, String>()
-//                    var i: Int = 0
-//                    // There are **always** 15 ingredients and corresponding measures
-//                    while (i < 15) {
-//                        i++
-//                        with(it) {
-//                            if (singleDrink.optString("strIngredient$i") != "null") {
-//                                if (it.toString().contains("strIngredient")) {
-//                                    val ingredient = singleDrink.optString("strIngredient$i")
-//                                    val idDrink = singleDrink.optString("idDrink")
-//                                    val measure = singleDrink.optString("strMeasure$i")
 //
-//                                    // optString returns null if nothing there, literally 'null' in string format
-//
-//                                    // if this isn't possible, it will return an empty string, so check against this,
-//                                    // keeping in mind that we can have an empty measure with an ingredient
-//                                    // eg sugar may not have a measure, it's just 'to taste'
-//                                    // so we allow 'null' measures
-//                                    if(ingredient.isNotBlank() && idDrink.isNotBlank()){
-//                                        // Now we've created our map of measures and ingredients,
-//                                        // We add it to our ingredients list and pass it through to the ingredients adapter
-//                                        ingredients.put(measure, ingredient)
-//                                    }
-//                                }
-//                            }
-//                        }
+//                    if(it == null){
+//                        spinner.visibility = View.VISIBLE;
+//                    } else{
+//                        spinner.visibility = View.GONE;
 //                    }
-//                    if (ingredients.isNotEmpty()) {
-//                        adapter = IngredientsListAdapter(ingredients, this@ViewFragment)
-//                        binding.ingredientsRecyclerView.adapter = adapter
-//                        binding.ingredientsRecyclerView.layoutManager = LinearLayoutManager(activity)
-//                        //spinner.visibility = View.GONE;
-//                    }
-//                }
-//            })
+                    })
+
 
             val myCustomFont : Typeface? = getActivity()?.let { ResourcesCompat.getFont(it, R.font.lobster_regular) }
             binding.cocktailText.typeface = myCustomFont
@@ -291,6 +291,31 @@ class ViewFragment : Fragment(),
             findNavController().navigate(action)
         }
 
+//        fun checkHasDescription(ingredientName: String){
+//                //getIngredientDetails(ingredientName)
+//
+//                viewViewModel.ingredientDetails?.observe(viewLifecycleOwner, Observer{
+//                    with(it){
+//                        // Get the name of the ingredient
+//                        if(it!= null) {
+//                            if(it[0].strDescription!=null) {
+//                                if (it[0].strDescription?.isNotEmpty() == true) {
+//                                    // Make sure returned details match the the name of the ingredient we've clicked on
+//                                    if (ingredientName.equals(it[0].strIngredient, ignoreCase = true)) {
+//                                        it[0].strIngredient?.let { it1 ->
+//                                            ingredientsWithDescriptions.add(
+//                                                it1
+//                                            )
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                })
+//        }
+
+
 
         override fun onItemClicked(ingredientName: String) {
             getIngredientDetails(ingredientName)
@@ -300,10 +325,14 @@ class ViewFragment : Fragment(),
                     // Get the name of the ingredient
                     if(it!= null) {
                         if(it[0].strDescription!=null) {
-                            if (it[0].strDescription.isNotEmpty()) {
+                            if (it[0].strDescription?.isNotEmpty() == true) {
                                 // Make sure returned details match the the name of the ingredient we've clicked on
                                 if (ingredientName.equals(it[0].strIngredient, ignoreCase = true)) {
-                                    navigateToNextPage(ingredientName, it[0].strDescription)
+                                    it[0].strDescription?.let { it1 ->
+                                        navigateToNextPage(ingredientName,
+                                            it1
+                                        )
+                                    }
                                 }
                             }
                         }

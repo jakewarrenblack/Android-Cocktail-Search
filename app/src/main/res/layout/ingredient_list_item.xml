@@ -32,8 +32,8 @@
 
         <TextView
             android:id="@+id/measureText"
-            android:layout_width="124dp"
-            android:layout_height="25dp"
+            android:layout_width="123dp"
+            android:layout_height="27dp"
             android:layout_margin="15dp"
             android:fontFamily="sans-serif"
             android:textColor="@color/black"
@@ -58,6 +58,19 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/moreInformationIcon"
+            android:visibility="gone"
+            android:layout_width="25dp"
+            android:layout_height="24dp"
+            app:layout_constraintBottom_toTopOf="@+id/ingredientText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.946"
+            app:layout_constraintStart_toEndOf="@+id/imageView2"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.761"
+            card_view:srcCompat="@android:drawable/ic_menu_info_details" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

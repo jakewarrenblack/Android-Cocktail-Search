@@ -47,15 +47,14 @@ class MainFragment : Fragment(),
     var cocktailItems: List<Cocktail>? = null
     var favouriteItems: MutableList<FavouriteEntity?>? = null
     var jsonItems: String = ""
-
-    val list: MutableList<Bundle>? = null
+    val list: MutableList<Cocktail> = mutableListOf()
 
     private lateinit var responseJson: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Getting our search query from the search page
         searchQuery = args.searchQuery;
 
@@ -66,19 +65,8 @@ class MainFragment : Fragment(),
 
         // It's important to obtain an instance of the viewModel during view creation
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-
-
-        //*********************************
-        //TODO: ** I need to make the second call based on the value of the first one **
         viewModel.getCocktails(searchQuery)
-        //viewModel.getFullJson(searchQuery)
-
-        //*********************************
-
         val liveData = viewModel.fetchData()
-
-        //viewModel.getFullJson(searchQuery)
-
 
         // now we have references to all child view components within the layout
 
@@ -120,19 +108,16 @@ class MainFragment : Fragment(),
 
                 if(cocktailItems?.isNotEmpty() == true) {
                     if (cocktailItems != null && jsonItems.isNotEmpty()) {
-
-
                         // Now we have both the cocktails and the json, we have to loop through the cocktails and get ingredient details for each of them, pass into adapter then,
                         // and the adapter's onclick interface will then pass it through to the viewfragment as arguments
                         // where we can observe just one piece of data (ingredientDetails) to pass into the ingredientsListAdapter
                         var jsonArray = JSONObject(jsonItems)
-
                         var j: Int = -1
                         for(cocktail in cocktailItems!!){
                             j++
                             val drinksObject: JSONArray = jsonArray.getJSONArray("drinks")
                             val singleDrink = drinksObject.getJSONObject(0)
-                            var ingredients = mutableMapOf<String, String>()
+                            var ingredients: MutableMap<String, String> = mutableMapOf()
                             var i: Int = 0
                             while (i < 15) {
                                 i++
@@ -148,29 +133,27 @@ class MainFragment : Fragment(),
                                                 val ingredientBundle = bundleOf("measure" to measure,"ingredient" to ingredient)
                                                 //cocktail.ingredients?.putString(measure, ingredient)
                                                 //cocktail.ingredients?.putAll(ingredientBundle)
+                                                //ingredients.put(measure, ingredient)
+                                                //ingredients.putAll(bundleOf("measure" to measure, "ingredient" to ingredient))
                                                 ingredients.put(measure, ingredient)
-
                                             }
                                         }
                                     }
                                 }
                             }
 
-                            // Create a parcelable object
-                            val bundle = Bundle()
-                            val parcel = Cocktail(cocktail.idDrink, cocktail.strDrink, cocktail.strInstructions, cocktail.strDrinkThumb, ingredients)
-                            bundle.putParcelable("cocktail$j", parcel)
-
+                            val cocktailObject = Cocktail(cocktail.idDrink, cocktail.strDrink, cocktail.strInstructions, cocktail.strDrinkThumb, ingredients)
                             // So for each piece of completed data, we make a cocktail object (bundle), and add it to our list
                             // Then below, we'll pass it into our cocktails list adapter
-                            list?.add(bundle)
-
+                            list.add(cocktailObject)
                         }
 
-                        if (cocktailItems!!.isNotEmpty()) {
-                            adapter = CocktailsListAdapter(list, favouriteItems, this@MainFragment)
-                            binding.mainRecyclerView.adapter = adapter
-                            binding.mainRecyclerView.layoutManager = LinearLayoutManager(activity)
+                        if (list.isNotEmpty()) {
+                            if (cocktailItems!!.isNotEmpty() && list.isNotEmpty()) {
+                                adapter = CocktailsListAdapter(list, favouriteItems, this@MainFragment)
+                                binding.mainRecyclerView.adapter = adapter
+                                binding.mainRecyclerView.layoutManager = LinearLayoutManager(activity)
+                            }
                         }
                     }
 

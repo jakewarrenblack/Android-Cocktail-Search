@@ -16,9 +16,6 @@ interface CocktailApi {
     // the suspend keyword indicates that this
     // function should be called from a coroutine
     // retrofit has built-in support for coroutines
-    //@GET("search.php?s={searchQuery}")
-    //suspend fun getCocktails(@Query("searchQuery") searchQuery: String?): CocktailResponse
-//    suspend fun getCocktails(@Path("searchQuery") String searchQuery): CocktailResponse
 
     // I was doing it like this, throwing HTTP 403
     @GET("search.php")

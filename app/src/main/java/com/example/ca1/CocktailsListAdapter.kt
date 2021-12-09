@@ -16,7 +16,7 @@ import com.bumptech.glide.Glide
 import com.example.ca1.data.FavouriteEntity
 
 class CocktailsListAdapter(
-    private val cocktailsList: MutableList<Bundle>?,
+    private val cocktailsList: MutableList<Cocktail>?,
     private var favouritesList: MutableList<FavouriteEntity?>?,
     // this listener object is a reference to the fragment that is calling the adapter
     private val listener: ListItemListener,
@@ -56,12 +56,12 @@ class CocktailsListAdapter(
     // So in our case, we're finding the appropriate cocktail name in the list and displaying it in the list item's TextView widget.
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val cocktail = cocktailsList?.get(holder.adapterPosition)
-        val cocktailFromBundle = cocktail?.getParcelable<Cocktail>("cocktail")
+        //val cocktailFromBundle = cocktail?.getParcelable<Cocktail>("cocktail")
 
         // Assign the value of the current favourite (which is initially null) to use the same properties as the cocktail where the IDs are the same
         if(!favouritesList?.isEmpty()!! && cocktail != null){
-            if (cocktailFromBundle != null) {
-                favourite = getFavourite(cocktailFromBundle.idDrink)
+            if (cocktail != null) {
+                favourite = getFavourite(cocktail.idDrink)
             }
         }
 
@@ -72,13 +72,13 @@ class CocktailsListAdapter(
         // this 'with' block means we can refer to lots of stuff inside the binding
         with(holder.binding) {
             if (cocktail != null) {
-                if (cocktailFromBundle != null) {
-                    Glide.with(root).load(cocktailFromBundle.strDrinkThumb).centerCrop().into(imageView)
+                if (cocktail != null) {
+                    Glide.with(root).load(cocktail.strDrinkThumb).centerCrop().into(imageView)
                 }
             }
             if (cocktail != null) {
-                if (cocktailFromBundle != null) {
-                    cocktailText.text = cocktailFromBundle.strDrink
+                if (cocktail != null) {
+                    cocktailText.text = cocktail.strDrink
                 }
 
             }
@@ -89,8 +89,8 @@ class CocktailsListAdapter(
             root.setOnClickListener{
                 // and this is the unique ID for that piece of data
                 if (cocktail != null) {
-                    if (cocktailFromBundle != null) {
-                        listener.onItemClick(cocktailFromBundle, "mainFragment")
+                    if (cocktail != null) {
+                        listener.onItemClick(cocktail, "mainFragment")
                     }
                 }
             }
@@ -102,8 +102,8 @@ class CocktailsListAdapter(
 
             favouriteToggle.setOnClickListener{
                 if (cocktail != null) {
-                    if (cocktailFromBundle != null) {
-                        listener.onSaveClick(cocktailFromBundle, isFavourite, favourite?.id, position)
+                    if (cocktail != null) {
+                        listener.onSaveClick(cocktail, isFavourite, favourite?.id, position)
                     }
                 }
             }

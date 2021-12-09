@@ -11,6 +11,7 @@ import com.squareup.picasso.Picasso
 
 class IngredientsListAdapter (
     private var ingredients: MutableMap<String, String>,
+    private var ingredientsWithDescriptions: List<Ingredient?>,
     private var listener: ListItemListener,
 ):
     RecyclerView.Adapter<IngredientsListAdapter.ViewHolder>() {
@@ -57,6 +58,18 @@ class IngredientsListAdapter (
                             .load("https://www.thecocktaildb.com/images/ingredients/${ingredientText.text}.png")
                             .error(R.drawable.ic_launcher_background).resize(50, 50).centerInside()
                             .into(imageView2);
+
+                        for(ingredientDescription in ingredientsWithDescriptions){
+                            if(ingredientDescription?.strIngredient == ingredientText.text && ingredientDescription?.strDescription != null){
+                                moreInformationIcon.visibility = View.VISIBLE
+                            }
+                        }
+//
+//                        if(ingredientsWithDescriptions.contains(ingredient))
+//
+//                        if(ingredientsWithDescriptions.contains(ingredientText.text)){
+//                            holder.binding.moreInformationIcon.visibility = View.VISIBLE
+//                        }
 
                         root.setOnClickListener{
                             // and this is the unique ID for that piece of data
