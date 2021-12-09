@@ -16,6 +16,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+// Here's the go-between for our viewfragment and our live data/local sqlite database
 class ViewViewModel (app: Application) : AndroidViewModel(app) {
     private val database = AppDatabase.getInstance(app)
 

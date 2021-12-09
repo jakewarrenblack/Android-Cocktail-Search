@@ -45,26 +45,6 @@ class FavouritesFragment : Fragment(),
         savedInstanceState: Bundle?
     ): View? {
 
-        /*
-        "When an activity is popped off the stack by navigating back,
-        it doesn't retain any of its views or state.
-        The activity object and all its views and state are destroyed."
-
-        This presents a problem for us when trying to ensure an item is removed
-        from the recyclerview when the user unsaves it from the viewfragment side.
-
-        We pass the cocktail position through when an item is clicked so the viewfragment has a reference to it,
-        and then if the user clicks unsave from the viewfragment, we pass this integer back up the stack,
-        and get our favouritesfragment to retrieve it on load,
-
-        now we can make sure this item is removed from the newly created adapter
-
-        // TODO:
-        WE ALSO NEED TO FIGURE OUT PASSING A FAVOURITE OBJECT,
-        THE POSITION WILL ONLY SERVE TO REMOVE IT FROM THE UI, WITHOUT ACTUALLY UPDATING THE DB
-         */
-
-
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         binding = FavouritesFragmentBinding.inflate(inflater, container, false)
         spinner = binding.progressBar1
@@ -81,7 +61,7 @@ class FavouritesFragment : Fragment(),
             )
         }
 
-
+        // Getting a reference to our favourites so we can provide our adapter with a list of favourites, populating the recyclerview
         viewModel.favourites.observe(viewLifecycleOwner, Observer{
             if(viewModel.favourites.value != null){
                 if (it != null) {
@@ -113,27 +93,28 @@ class FavouritesFragment : Fragment(),
     override fun onItemClick(cocktailId: Int, cocktailInstructions: String, cocktailName: String, cocktailImage: String, fragmentName: String) {
         Log.i(TAG, "onItemClick: received cocktail id $cocktailId")
 
-
-
         val action = FavouritesFragmentDirections.actionViewCocktail(cocktailId, cocktailInstructions, cocktailName, cocktailImage, fragmentName)
         findNavController().navigate(action)
     }
 
     override fun onSaveClick(favourite: FavouriteEntity, isFavourite: Boolean, adapterFavouriteId: Int?, position: Int) {
         // In the MainFragment we have an if statement to check if the cocktail is an existing favourite, but in this case we know it is, because we're looking at a list of FavouriteEntities
-            Log.i("FavouriteExistence", "Removing favourite: ${favourite.id} ${ favourite.strDrink} / adapterfavourite: $adapterFavouriteId")
+        Log.i("FavouriteExistence", "Removing favourite: ${favourite.id} ${ favourite.strDrink} / adapterfavourite: $adapterFavouriteId")
 
-            // The order of these is important, if we removed the favourite and updated the adapter's data, the view at this position would be removed, and the app would crash on a null pointer exception
-            binding.favouritesRecyclerView.removeViewAt(position)
+        // The order of these is important, if we removed the favourite and updated the adapter's data, the view at this position would be removed, and the app would crash on a null pointer exception
+        binding.favouritesRecyclerView.removeViewAt(position)
 
-            favouriteItems?.remove(favourite)
-            viewModel.removeFavourite(favourite)
+        favouriteItems?.remove(favourite)
+        viewModel.removeFavourite(favourite)
 
-            adapter.notifyItemRemoved(position);
+        // NotifyItemRemoved here is important in combination with binding.favouritesRecylerView.removeViewAt(position)
+        // We remove the data and tell the adapter and recyclerview where in their lists we've removed some data
+        // The UI will then update very nicely (slides out)
+        adapter.notifyItemRemoved(position);
 
-            // Update the UI if we've just the unsaved the only favourite
-            if(favouriteItems?.isEmpty() == true){
-                binding.noFavouritesSaved.visibility = View.VISIBLE
-            }
+        // Update the UI if we've just the unsaved the only favourite, needs this check or nothing will happen in this case
+        if(favouriteItems?.isEmpty() == true){
+            binding.noFavouritesSaved.visibility = View.VISIBLE
+        }
     }
 }

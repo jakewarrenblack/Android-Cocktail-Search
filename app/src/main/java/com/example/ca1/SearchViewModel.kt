@@ -12,5 +12,5 @@ import com.example.ca1.api.RetrofitInstance
 import kotlinx.coroutines.launch
 
 class SearchViewModel : ViewModel() {
-
+    // No implementation necessary here, our search query is handled in the SearchFragment and the MainFragment
 }

@@ -33,6 +33,9 @@ class MainViewModel (app: Application) : AndroidViewModel(app) {
     val _json: MutableLiveData<String> = MutableLiveData()
 
 
+    // We do the same thing for each of these variables
+    // We don't directly access these variables, we don't want to touch the livedata,
+    // instead we have a getter method to provide access
     val _favourites: MutableLiveData<MutableList<FavouriteEntity?>?> = MutableLiveData()
     var tempFavourites = _favourites.value
 
@@ -45,7 +48,6 @@ class MainViewModel (app: Application) : AndroidViewModel(app) {
     val currentFavourite: LiveData<FavouriteEntity>
         get() = _currentFavourite
 
-    // setter
 
     // we don't expose live data directly to the activity in the MVVM model
     // we use MutableLiveData as a wrapper for our live data
@@ -62,14 +64,15 @@ class MainViewModel (app: Application) : AndroidViewModel(app) {
 
 
 
+    // Retrieving a list of all of our cocktails based on the provided searchQuery
     fun getCocktails(searchQuery: String){
         // a coroutine function can only be called from a coroutine,
         // so we make one:
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 _isLoading.postValue(true)
+            // Retrieve all favourites so we know which cocktails need to display a 'solid' heart
             val fetchedCocktails = RetrofitInstance.api.getCocktails(searchQuery).drinks
-            //Log.i(TAG, "Fetched cocktails: $fetchedCocktails")
             _cocktails.postValue(fetchedCocktails)
 
                 val favourite =
@@ -82,13 +85,12 @@ class MainViewModel (app: Application) : AndroidViewModel(app) {
         }
     }
 
+    // Accessing our local database, inserting the passed favourite object
     fun saveFavourite(favouriteEntity: FavouriteEntity) {
         viewModelScope.launch {
             withContext(Dispatchers.IO){
                 database?.favouriteDao()?.insertFavourite(favouriteEntity)
 
-                // Not sure what I'm doing here,
-                // Trying to get the UI to update when a save is made
                 _currentFavourite.postValue(favouriteEntity)
                 tempFavourites?.add(favouriteEntity)
                 _favourites.postValue(tempFavourites)
@@ -137,8 +139,15 @@ class MainViewModel (app: Application) : AndroidViewModel(app) {
         }
     }
 
+
+    // Here's our implementation of our MediatorLiveData
+    // I'm using the mediator to allow accessing two data streams at once
+
+    // the view seemed to have difficulty observing two different data streams,
+    // so the mediator allows us to combine them into one and observe them at the same time
     fun fetchData(): MediatorLiveData<MergedData> {
         val liveDataMerger = MediatorLiveData<MergedData>()
+        // we've already defined our sealed MergedData class, now we add our sources to it
         liveDataMerger.addSource(cocktails) {
             if (it != null) {
                 liveDataMerger.value = MergedData.CocktailData(it)
@@ -152,18 +161,20 @@ class MainViewModel (app: Application) : AndroidViewModel(app) {
         return liveDataMerger
     }
 
+    // Here's our implementation of the raw json parsing
+    // I'm calling this method because of the poor API structure
+    // I would rather parse it manually than have almost 15 null values in my Cocktail class
     fun getFullJson(searchQuery: Int?){
         viewModelScope.launch {
             RetrofitInstance.api.getCocktailsJson(searchQuery).enqueue(object:
                 Callback<ResponseBody> {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    //handle error here
+                    // No need to handle error here, I'll do it in the view
                 }
 
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                     //your raw string response
                     val stringResponse = response.body()?.string()
-
                     _json.postValue(stringResponse)
                 }
 

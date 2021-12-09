@@ -38,10 +38,6 @@ import androidx.navigation.Navigation
 
 import androidx.navigation.NavController
 
-
-
-
-
 class ViewFragment : Fragment(),
 
     IngredientsListAdapter.ListItemListener
@@ -147,6 +143,12 @@ class ViewFragment : Fragment(),
                 }
             })
 
+            // The structure of the ingredients and measures from the API is not good.
+            // Because of this, I'm parsing the json myself manually
+            // The alternative would have been to have 15 mostly null fields in my Cocktail class
+            // Every cocktail response from the api has 15 fields for measures and ingredients but most of these are null,
+            // So instead I'm making a call to the same endpoint as we use the cocktail searches but returning a raw json response,
+            // I then loop through and retrieve ingredient names and measures, using them to populate a map which I then pass into the cocktail object
             mainViewModel.json.observe(viewLifecycleOwner, Observer { it ->
                 with(it) {
                     responseJson = it
@@ -193,6 +195,7 @@ class ViewFragment : Fragment(),
                 }
             })
 
+            // Defining a custom font
             val myCustomFont : Typeface? = getActivity()?.let { ResourcesCompat.getFont(it, R.font.lobster_regular) }
             binding.cocktailText.typeface = myCustomFont
 
@@ -256,6 +259,8 @@ class ViewFragment : Fragment(),
             if (mainViewModel.currentFavourite.value != null) {
                 Log.i("Favourite", "Cocktail already exists, unsaving")
                 // remove favourite - still passing the entity but ultimately only using its ID
+
+                // Clicking the 'save/unsave' button to remove favourites, use our reference to the mainViewModel to remove it from the DB
                 mainViewModel.removeFavourite(
                     FavouriteEntity(
                         args.cocktailId,
@@ -294,10 +299,14 @@ class ViewFragment : Fragment(),
         }
 
 
+        // Implementing the interface from our adapter
         override fun onItemClicked(ingredientName: String) {
+            // Retrieve ingredient details for the passed ingredientName
             getIngredientDetails(ingredientName)
 
+            // Once we've retrieved these details, observe them
             viewViewModel.ingredientDetails?.observe(viewLifecycleOwner, Observer{
+                // the with block get us access to the scope of the response, like using 'this'
                 with(it){
                     // Get the name of the ingredient
                     if(it!= null) {
@@ -305,6 +314,9 @@ class ViewFragment : Fragment(),
                             if (it[0].strDescription.isNotEmpty()) {
                                 // Make sure returned details match the the name of the ingredient we've clicked on
                                 if (ingredientName.equals(it[0].strIngredient, ignoreCase = true)) {
+                                    // Now bring us forward to the ingredient detail page,
+                                    // this click listener will only do something if our ingredient is actually clickable
+                                    // eg we can click on 'vodka' because it has more information available. we can't click on 'egg'.
                                     navigateToNextPage(ingredientName, it[0].strDescription)
                                 }
                             }

@@ -36,14 +36,7 @@ class IngredientsListAdapter (
             fun <K, V> printMap(map: Map<K, V>) {
                 for ((key, value) in ingredients.entries) {
                     Log.i("Ingredient:", "$key, $value")
-                    //ingredientText.text = key
-                    //measureText.text = value
 
-                    // TODO: Finish onclick for ingredient
-                    // Have api method, make a function for it in the viewmodel and call it in the fragment
-                    // only if ingredient id not null
-                    // then pass the result in here maybe?
-                    // or pass it to the onclick implementation of the interface in the fragment
 
                     if(key.isNotEmpty() && value.isNotEmpty()) {
                         ingredientText.text = ingredient.second

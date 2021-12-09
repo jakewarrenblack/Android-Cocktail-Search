@@ -1,5 +1,6 @@
 package com.example.ca1
 
+import android.graphics.Typeface
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,13 +11,16 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.ca1.databinding.IngredientsFragmentBinding
 import com.example.ca1.databinding.ViewFragmentBinding
 
+// This fragment is where we display our ingredient details, eg a description of a spirit
 class IngredientsFragment : Fragment() {
 
+    // Companion object not actually necessary, added it when experimenting with updating UI on data change
     companion object {
         fun newInstance() = IngredientsFragment()
     }
@@ -44,13 +48,13 @@ class IngredientsFragment : Fragment() {
         spinner = binding.progressBar2
         spinner.visibility = View.VISIBLE
 
-        if(args.ingredientDescription != null && args.ingredientName!= null){
-            binding.ingredientTitle.setText("${args.ingredientName}")
 
-            binding.ingredientDescription.setText("${args.ingredientDescription}")
+        // Data has been passed through our arguments, now we access this data and pass it to our UI
+        binding.ingredientTitle.text = args.ingredientName
 
-            spinner.visibility = View.GONE
-        }
+        binding.ingredientDescription.text = args.ingredientDescription
+
+        spinner.visibility = View.GONE
 
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
@@ -60,6 +64,9 @@ class IngredientsFragment : Fragment() {
                 }
             }
         )
+
+        val myCustomFont : Typeface? = activity?.let { ResourcesCompat.getFont(it, R.font.lobster_regular) }
+        binding.ingredientTitle.typeface = myCustomFont
 
         return binding.root
     }
@@ -79,7 +86,7 @@ class IngredientsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(IngredientsViewModel::class.java)
-        // TODO: Use the ViewModel
+        // No viewmodel access necessary for this fragment
     }
 
 }

@@ -43,7 +43,7 @@ class FavouritesViewModel (app: Application) : AndroidViewModel(app) {
     }
 
 
-    fun getFavourites(){
+    private fun getFavourites(){
         viewModelScope.launch {
             //_isLoading.postValue(true)
             withContext(Dispatchers.IO) {

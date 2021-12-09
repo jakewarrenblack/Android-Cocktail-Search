@@ -6,8 +6,10 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.ca1.data.FavouriteEntity
 
+// A DAO is a data access object, we use this to manipulate the data for our SQLite Room database
 @Dao
 interface FavouriteDao {
+    // Room implements these methods
 
     // this insert deals with creating by inserting and also updates by replacing them
     @Insert(onConflict = OnConflictStrategy.REPLACE)

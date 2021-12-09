@@ -10,5 +10,5 @@ data class FavouriteEntity(
     @PrimaryKey val id: Int,
     val strDrink: String,
     val strInstructions: String,
-    val strDrinkThumb: String
+    val strDrinkThumb: String,
 )
