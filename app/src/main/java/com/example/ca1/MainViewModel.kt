@@ -4,12 +4,9 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
 import com.example.ca1.api.RetrofitInstance
-import com.example.ca1.data.CocktailEntity
 import com.example.ca1.data.FavouriteEntity
 import com.example.ca1.data.MergedData
-import com.example.ca1.data.SampleDataProvider
 import com.example.ca1.model.Cocktail
-import com.example.ca1.model.CocktailResponse
 import com.example.plantapp.localDB.AppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -85,13 +82,19 @@ class MainViewModel (app: Application) : AndroidViewModel(app) {
         }
     }
 
+    // We have more or less the same methods in our mainfragment **and** our viewfragment, because we can save/remove fragments from the main list using the 'heart' icon
+    // or from the details page using the save/unsave button
+
     // Accessing our local database, inserting the passed favourite object
     fun saveFavourite(favouriteEntity: FavouriteEntity) {
         viewModelScope.launch {
             withContext(Dispatchers.IO){
                 database?.favouriteDao()?.insertFavourite(favouriteEntity)
 
+                // We use postValue, because we can't directly set a value from within a coroutine
                 _currentFavourite.postValue(favouriteEntity)
+                // this method will deal with a single favourite object, so to keep the _favourites list up to date,
+                // we add each value to the tempFavourites list and then assign its value to the tempFavourites list
                 tempFavourites?.add(favouriteEntity)
                 _favourites.postValue(tempFavourites)
             }

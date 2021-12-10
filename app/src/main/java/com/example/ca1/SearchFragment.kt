@@ -14,7 +14,6 @@ import androidx.navigation.fragment.findNavController
 import com.example.ca1.databinding.SearchFragmentBinding
 
 class SearchFragment : Fragment() {
-    private lateinit var viewModel: SearchViewModel
     private lateinit var binding: SearchFragmentBinding
 
     override fun onCreateView(
@@ -65,7 +64,6 @@ class SearchFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
     }
 
 }

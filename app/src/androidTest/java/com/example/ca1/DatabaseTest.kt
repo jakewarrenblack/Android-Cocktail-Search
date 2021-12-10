@@ -3,9 +3,6 @@ package com.example.ca1
 import androidx.room.Room
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.ca1.data.AppDatabase
-import com.example.ca1.data.CocktailDao
-import com.example.ca1.data.SampleDataProvider
 import org.junit.After
 
 import org.junit.Test

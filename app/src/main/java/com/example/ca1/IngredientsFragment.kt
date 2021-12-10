@@ -50,6 +50,7 @@ class IngredientsFragment : Fragment() {
 
 
         // Data has been passed through our arguments, now we access this data and pass it to our UI
+        // We've received our title and description from the ViewFragment
         binding.ingredientTitle.text = args.ingredientName
 
         binding.ingredientDescription.text = args.ingredientDescription

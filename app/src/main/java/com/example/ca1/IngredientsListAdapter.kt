@@ -60,11 +60,15 @@ class IngredientsListAdapter (
                     }
                 }
             }
+            // Now call the method above
             print(ingredients.toList())
             printMap(ingredients)
         }
     }
 
+
+    // This interface is implemented in the ViewFragment, we use it to pass our ingredientName through to the ViewFragment and make an api call based on it
+    // then we pass the user through to the ingredients fragment to display the details
     interface ListItemListener {
         fun onItemClicked(ingredientName: String)
     }

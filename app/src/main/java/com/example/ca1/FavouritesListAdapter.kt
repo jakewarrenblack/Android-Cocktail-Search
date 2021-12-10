@@ -33,9 +33,6 @@ class FavouritesListAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val favourite = favouritesList?.get(holder.adapterPosition)
 
-//        if(!favouritesList?.isEmpty()!! && cocktail != null){
-//            favourite = getFavourite(cocktail.idDrink)
-//        }
 
         // this 'with' block means we can refer to lots of stuff inside the binding
         with(holder.binding) {

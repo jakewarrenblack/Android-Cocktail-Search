@@ -1,6 +1,4 @@
 package com.example.ca1.api
-
-import com.example.ca1.data.CocktailEntity
 import com.example.ca1.model.Cocktail
 import com.example.ca1.model.CocktailResponse
 import com.example.ca1.model.IngredientResponse

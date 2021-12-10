@@ -134,7 +134,7 @@ class MainFragment : Fragment(),
 
     // We've defined interfaces for the onItemClick and onSaveClick methods in our CocktailListAdapter, and now we implement them here
     override fun onItemClick(cocktailId: Int, cocktailName: String, cocktailInstructions: String, cocktailImage: String, fragmentName: String) {
-        Log.i(TAG, "onItemClick: received cocktail id $cocktailId")
+        //Log.i(TAG, "onItemClick: received cocktail id $cocktailId")
         // sending data from MainFragment to ViewFragment
         val action = MainFragmentDirections.actionViewCocktail(cocktailId, cocktailName, cocktailInstructions, cocktailImage, fragmentName)
         // get a reference to the navigation host, passing in a strongly typed value (an int)

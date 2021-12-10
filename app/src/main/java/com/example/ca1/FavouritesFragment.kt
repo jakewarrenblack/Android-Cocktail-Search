@@ -28,6 +28,7 @@ class FavouritesFragment : Fragment(),
         fun newInstance() = FavouritesFragment()
     }
 
+    // Initialising our variables as 'lateinit' means we're promising to initialise them at a later point in our execution
     private lateinit var viewModel: FavouritesViewModel
     private lateinit var binding: FavouritesFragmentBinding
     private lateinit var adapter: FavouritesListAdapter
@@ -35,6 +36,7 @@ class FavouritesFragment : Fragment(),
     var cocktailItems: List<Cocktail>? = null
     var favouriteItems: MutableList<FavouriteEntity?>? = null
 
+    // onResume will run when our activity is paused for some reason, eg navigating to another fragment and back again
     override fun onResume() {
         super.onResume()
         favouriteItems = null
@@ -64,13 +66,18 @@ class FavouritesFragment : Fragment(),
         // Getting a reference to our favourites so we can provide our adapter with a list of favourites, populating the recyclerview
         viewModel.favourites.observe(viewLifecycleOwner, Observer{
             if(viewModel.favourites.value != null){
+                // Check if our data has been received
                 if (it != null) {
                     if(it.isNotEmpty()) {
                         this.favouriteItems = it
+                        // Our loader will be visible until our favouriteItems are retrieved
                         spinner.visibility = View.GONE;
                         if (favouriteItems != null) {
+                            // Using the getCocktails method because a favourite object has the same properties as a cocktail (other than ingredients, which are populated by raw json parsing)
                             viewModel.getCocktails(favouriteItems)
 
+                            // Now we've got our data, create our adapter which we use to populate the recyclerview
+                            // passing in our favouriteItems, the details of which will be used to fill the recyclerview's list items
                             adapter = FavouritesListAdapter(favouriteItems, this@FavouritesFragment)
                             binding.favouritesRecyclerView.adapter = adapter
                             binding.favouritesRecyclerView.layoutManager = LinearLayoutManager(activity)
@@ -78,6 +85,7 @@ class FavouritesFragment : Fragment(),
                         }
                     }
                     else{
+                        // If no data received, stop the loader, and display a message to say that no favourites are saved
                         spinner.visibility = View.GONE
                         binding.noFavouritesSaved.visibility = View.VISIBLE
                     }
@@ -91,8 +99,6 @@ class FavouritesFragment : Fragment(),
 
     // Position is used to get a reference to where in the list this specific item is, that means we can update the UI even from the single view page
     override fun onItemClick(cocktailId: Int, cocktailInstructions: String, cocktailName: String, cocktailImage: String, fragmentName: String) {
-        Log.i(TAG, "onItemClick: received cocktail id $cocktailId")
-
         val action = FavouritesFragmentDirections.actionViewCocktail(cocktailId, cocktailInstructions, cocktailName, cocktailImage, fragmentName)
         findNavController().navigate(action)
     }

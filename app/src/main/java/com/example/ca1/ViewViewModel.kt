@@ -54,7 +54,7 @@ class ViewViewModel (app: Application) : AndroidViewModel(app) {
             _isLoading.postValue(true)
             val fetchedIngredientDetails = RetrofitInstance.api.getIngredientByName(name).ingredients
 
-            Log.i(TAG, "Fetched ingredient details A: ${fetchedIngredientDetails}")
+            //Log.i(TAG, "Fetched ingredient details A: ${fetchedIngredientDetails}")
             _isLoading.postValue(false)
            _ingredientDetails?.postValue(fetchedIngredientDetails)
         }
