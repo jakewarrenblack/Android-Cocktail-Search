@@ -90,7 +90,14 @@ class ViewFragment : Fragment(),
 
             // Iterators need non-nullable values
             ingredients = args.cocktail.ingredients!!
-            val liveData = viewViewModel.fetchData(ingredients)
+
+            // initialise the binding
+            binding = ViewFragmentBinding.inflate(inflater, container, false);
+            favouritesFragmentBinding = FavouritesFragmentBinding.inflate(inflater, container, false)
+            spinner = binding.progressBar1
+
+
+
 
             // get a reference to the activity which owns this fragment
             (activity as AppCompatActivity).supportActionBar?.let {
@@ -102,10 +109,9 @@ class ViewFragment : Fragment(),
 
             setHasOptionsMenu(true)
 
-            // initialise the binding
-            binding = ViewFragmentBinding.inflate(inflater, container, false);
-            favouritesFragmentBinding = FavouritesFragmentBinding.inflate(inflater, container, false)
-            //spinner = binding.progressBar2
+
+            val liveData = viewViewModel.fetchData(ingredients)
+
 
             //spinner.visibility = View.VISIBLE;
 
@@ -118,15 +124,7 @@ class ViewFragment : Fragment(),
                 )
             }
 
-            // use this binding to update the TextView
-            // set the text of the cocktail's TextView
-            // a string literal like in JavaScript
-            binding.cocktailText.setText("${args.cocktail.strDrink}")
 
-            binding.cocktailInstructions.setText("${args.cocktail.strInstructions}")
-
-            Glide.with(binding.root).load(args.cocktail.strDrinkThumb).centerCrop()
-                .into(binding.cocktailImage)
             // this file uses the view_fragment.xml as its layout file
 
             // if the user runs a back gesture either through an actual button OR a gesture,
@@ -145,10 +143,21 @@ class ViewFragment : Fragment(),
             favouritesViewModel = ViewModelProvider(this).get(FavouritesViewModel::class.java)
 
             //mainViewModel.getFullJson(args.cocktailId)
+            // use this binding to update the TextView
+            // set the text of the cocktail's TextView
+            // a string literal like in JavaScript
+            binding.cocktailText.setText("${args.cocktail.strDrink}")
+
+            binding.cocktailInstructions.setText("${args.cocktail.strInstructions}")
+
+            Glide.with(binding.root).load(args.cocktail.strDrinkThumb).centerCrop()
+                .into(binding.cocktailImage)
 
             binding.favouriteButton.setOnClickListener {
                 saveFavourite();
             }
+
+
 
             // When we've finished populating the list of ingredient details in the viewviewmodel
                 liveData.observe(viewLifecycleOwner,
@@ -159,6 +168,12 @@ class ViewFragment : Fragment(),
                             is MergedData.IngredientsData -> ingredientItems = it.ingredientItems
                         }
 
+                    if(ingredientItems != null && currentFavouriteItem != null){
+                        spinner.visibility = View.VISIBLE;
+
+                    } else{
+                        spinner.visibility = View.GONE;
+                        binding.favouriteButton.visibility = View.VISIBLE;
                         if (currentFavouriteItem == null) {
                             binding.favouriteButton.text = "Not saved"
                         } else {
@@ -170,24 +185,17 @@ class ViewFragment : Fragment(),
                         }
 
 
-                        adapter = args.cocktail.ingredients?.let {
-                            ingredientsWithDescriptions?.let { it1 ->
-                                IngredientsListAdapter(
-                                    it,
-                                    it1, this@ViewFragment
-                                )
-                            }
-                        }!!
+                        adapter = IngredientsListAdapter(ingredients, ingredientsWithDescriptions,this@ViewFragment)
+
+//                        adapter = args.cocktail.ingredients?.let {
+//                            ingredientsWithDescriptions?.let { it1 ->
+//                                IngredientsListAdapter(it, it1, this@ViewFragment)
+//                            }
+//                        }!!
                         binding.ingredientsRecyclerView.adapter = adapter
                         binding.ingredientsRecyclerView.layoutManager =
                             LinearLayoutManager(activity)
-//
-//
-//                    if(it == null){
-//                        spinner.visibility = View.VISIBLE;
-//                    } else{
-//                        spinner.visibility = View.GONE;
-//                    }
+                    }
                     })
 
 
@@ -196,6 +204,11 @@ class ViewFragment : Fragment(),
 
             // we've already inflated the layout, so we'll just return the binding.root instead of returning the inflated layout
             return binding.root
+        }
+
+        override fun onResume() {
+            super.onResume()
+            viewViewModel.fetchData(ingredients)
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -294,26 +307,6 @@ class ViewFragment : Fragment(),
 
         override fun onItemClicked(ingredientName: String, ingredientDescription: String) {
             getIngredientDetails(ingredientName)
-
-//            viewViewModel.ingredientDetails?.observe(viewLifecycleOwner, Observer{
-//                with(it){
-//                    // Get the name of the ingredient
-//                    if(it!= null) {
-//                        if(it[0]?.strDescription!=null) {
-//                            if (it[0]?.strDescription?.isNotEmpty() == true) {
-//                                // Make sure returned details match the the name of the ingredient we've clicked on
-//                                if (ingredientName.equals(it[0]?.strIngredient, ignoreCase = true)) {
-//                                    it[0]?.strDescription?.let { it1 ->
-//                                        navigateToNextPage(ingredientName,
-//                                            it1
-//                                        )
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            })
             navigateToNextPage(ingredientName,
                 ingredientDescription
             )

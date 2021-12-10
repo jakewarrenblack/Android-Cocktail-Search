@@ -7,54 +7,70 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ViewFragment">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="15dp"
         android:paddingHorizontal="15dp"
-        android:orientation="vertical">
+        android:paddingVertical="15dp">
 
         <TextView
             android:id="@+id/cocktailText"
-            android:textColor="@color/raisinBlack"
-            android:layout_marginTop="10dp"
-            android:textStyle="bold"
-            android:textSize="60sp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            tools:text="Hello" />
+            android:textColor="@color/raisinBlack"
+            android:textSize="60sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Space
+            android:id="@+id/space"
             android:layout_width="match_parent"
-            android:layout_height="15dp" />
+            android:layout_height="15dp"
+            app:layout_constraintTop_toBottomOf="@+id/cocktailText"
+            tools:layout_editor_absoluteX="15dp" />
 
         <ImageView
             android:id="@+id/cocktailImage"
             android:layout_width="match_parent"
             android:layout_height="250dp"
-            app:layout_constraintWidth_percent=".3"
+            android:contentDescription="@string/imageDescription"
             app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/space" />
+
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:srcCompat="@drawable/ic_launcher_background"
-            android:contentDescription="@string/imageDescription" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Space
+            android:id="@+id/space2"
             android:layout_width="match_parent"
+            app:layout_constraintTop_toBottomOf="@id/cocktailImage"
             android:layout_height="40dp" />
 
         <TextView
             android:id="@+id/cocktailInstructions"
+            app:layout_constraintTop_toBottomOf="@id/space2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            tools:text="Hello" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <Space
+            app:layout_constraintTop_toBottomOf="@id/cocktailInstructions"
+            android:id="@+id/space3"
             android:layout_width="match_parent"
-            android:layout_height="25dp" />
+            android:layout_height="25dp"
+            app:layout_constraintBottom_toTopOf="@id/ingredientsRecyclerView"
+            />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/ingredientsRecyclerView"
@@ -63,24 +79,28 @@
             android:clickable="true"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/space4"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Space
+            android:id="@+id/space4"
+            app:layout_constraintTop_toBottomOf="@id/ingredientsRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="20dp" />
 
         <Button
+            app:layout_constraintStart_toStartOf="parent"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
             android:id="@+id/favouriteButton"
+            app:layout_constraintTop_toBottomOf="@id/space4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="7dp"
-            android:text="Favourite"
-            />
+            android:text="Favourite" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 

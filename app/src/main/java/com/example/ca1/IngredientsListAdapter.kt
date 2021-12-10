@@ -11,7 +11,7 @@ import com.squareup.picasso.Picasso
 
 class IngredientsListAdapter (
     private var ingredients: MutableMap<String, String>,
-    private var ingredientsWithDescriptions: List<Ingredient?>,
+    private var ingredientsWithDescriptions: List<Ingredient?>?,
     private var listener: ListItemListener,
 ):
     RecyclerView.Adapter<IngredientsListAdapter.ViewHolder>() {
@@ -60,7 +60,7 @@ class IngredientsListAdapter (
                             .error(R.drawable.ic_launcher_background).resize(50, 50).centerInside()
                             .into(imageView2);
 
-                        for(ingredientDescription in ingredientsWithDescriptions){
+                        for(ingredientDescription in ingredientsWithDescriptions!!){
                             if(ingredientDescription?.strIngredient.equals(ingredient.second, ignoreCase = true) && ingredientDescription?.strDescription != null){
                                 moreInformationIcon.visibility = View.VISIBLE
                                 ingredientDescriptionStr = ingredientDescription.strDescription
