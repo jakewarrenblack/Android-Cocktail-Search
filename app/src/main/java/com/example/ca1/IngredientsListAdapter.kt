@@ -32,6 +32,7 @@ class IngredientsListAdapter (
         val list = ingredients.toList()
 
         val ingredient = list.get(holder.adapterPosition)
+        var ingredientDescriptionStr: String = ""
         // this 'with' block means we can refer to lots of stuff inside the binding
         with(holder.binding) {
             fun <K, V> printMap(map: Map<K, V>) {
@@ -60,8 +61,11 @@ class IngredientsListAdapter (
                             .into(imageView2);
 
                         for(ingredientDescription in ingredientsWithDescriptions){
-                            if(ingredientDescription?.strIngredient == ingredientText.text && ingredientDescription?.strDescription != null){
+                            if(ingredientDescription?.strIngredient.equals(ingredient.second, ignoreCase = true) && ingredientDescription?.strDescription != null){
                                 moreInformationIcon.visibility = View.VISIBLE
+                                ingredientDescriptionStr = ingredientDescription.strDescription
+                                // Once it gets a match, stop looping
+                                //return
                             }
                         }
 //
@@ -74,7 +78,7 @@ class IngredientsListAdapter (
                         root.setOnClickListener{
                             // and this is the unique ID for that piece of data
                             if (ingredient != null) {
-                                listener.onItemClicked(ingredient.second)
+                                listener.onItemClicked(ingredient.second, ingredientDescriptionStr)
                             }
                         }
                     }
@@ -86,6 +90,6 @@ class IngredientsListAdapter (
     }
 
     interface ListItemListener {
-        fun onItemClicked(ingredientName: String)
+        fun onItemClicked(ingredientName: String, ingredientDescription: String)
     }
 }

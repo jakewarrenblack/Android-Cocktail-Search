@@ -2,22 +2,15 @@ package com.example.ca1
 
 import android.app.Application
 import android.util.Log
-import android.view.View
 import androidx.lifecycle.*
 import com.example.ca1.api.RetrofitInstance
 import com.example.ca1.data.FavouriteEntity
 import com.example.ca1.data.MergedData
-import com.example.ca1.model.Cocktail
 import com.example.ca1.model.Ingredient
 import com.example.plantapp.localDB.AppDatabase
-import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class ViewViewModel (app: Application) : AndroidViewModel(app) {
     private val database = AppDatabase.getInstance(app)
@@ -27,24 +20,39 @@ class ViewViewModel (app: Application) : AndroidViewModel(app) {
     get() = _currentFavourite
 
     // This can be null, not all ingredients will have details
-    private val _ingredientDetails: MutableLiveData<List<Ingredient>> = MutableLiveData()
-    val ingredientDetails: LiveData<List<Ingredient>>
+    private val _ingredientDetails: MutableLiveData<MutableList<Ingredient?>> = MutableLiveData()
+    val ingredientDetails: LiveData<MutableList<Ingredient?>>
         get() = _ingredientDetails
 
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean>
         get() = _isLoading
 
-    private val _ingredientDetailsList: MutableLiveData<List<Ingredient>> = MutableLiveData()
-    val ingredientDetailsList: LiveData<List<Ingredient>>
-        get() = _ingredientDetailsList
+
+    // I'm trying to make a temporary list like I do in favourites,
+    // I want to add to this list every time, and then assign its' value
+    // to the real list, the one we feed into the mediatorlivedata
+    var tempIngredientDetails: MutableList<Ingredient?> = mutableListOf()
 
 
     fun getIngredientDetailsByName(name: String){
         viewModelScope.launch {
-            val fetchedIngredientDetails = RetrofitInstance.api.getIngredientByName(name).ingredients
-            Log.i(TAG, "Fetched ingredient details A: ${fetchedIngredientDetails}")
-            _ingredientDetails.postValue(fetchedIngredientDetails)
+            withContext(Dispatchers.IO) {
+                val fetchedIngredientDetails =
+                    RetrofitInstance.api.getIngredientByName(name).ingredients
+                Log.i(TAG, "Fetched ingredient details A: ${fetchedIngredientDetails}")
+                // Every time this runs, it replaces the entire value of _ingredientDetails with the entire value **received** from the api
+                // It replaces one MutableList, with another MutableList,
+                // I need to figure out how to make it *add* to the existing list
+
+                // Get a single ingredientDetail back, and add it to the temporary list
+                val ingredient: Ingredient? = fetchedIngredientDetails?.first()
+
+                tempIngredientDetails.add(ingredient)
+
+                // And then assign the value of the temp list to _ingredientDetails, giving us a full list
+                _ingredientDetails.postValue(tempIngredientDetails)
+            }
 
         }
     }

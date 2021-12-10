@@ -291,53 +291,33 @@ class ViewFragment : Fragment(),
             findNavController().navigate(action)
         }
 
-//        fun checkHasDescription(ingredientName: String){
-//                //getIngredientDetails(ingredientName)
-//
-//                viewViewModel.ingredientDetails?.observe(viewLifecycleOwner, Observer{
-//                    with(it){
-//                        // Get the name of the ingredient
-//                        if(it!= null) {
-//                            if(it[0].strDescription!=null) {
-//                                if (it[0].strDescription?.isNotEmpty() == true) {
-//                                    // Make sure returned details match the the name of the ingredient we've clicked on
-//                                    if (ingredientName.equals(it[0].strIngredient, ignoreCase = true)) {
-//                                        it[0].strIngredient?.let { it1 ->
-//                                            ingredientsWithDescriptions.add(
-//                                                it1
-//                                            )
-//                                        }
+
+        override fun onItemClicked(ingredientName: String, ingredientDescription: String) {
+            getIngredientDetails(ingredientName)
+
+//            viewViewModel.ingredientDetails?.observe(viewLifecycleOwner, Observer{
+//                with(it){
+//                    // Get the name of the ingredient
+//                    if(it!= null) {
+//                        if(it[0]?.strDescription!=null) {
+//                            if (it[0]?.strDescription?.isNotEmpty() == true) {
+//                                // Make sure returned details match the the name of the ingredient we've clicked on
+//                                if (ingredientName.equals(it[0]?.strIngredient, ignoreCase = true)) {
+//                                    it[0]?.strDescription?.let { it1 ->
+//                                        navigateToNextPage(ingredientName,
+//                                            it1
+//                                        )
 //                                    }
 //                                }
 //                            }
 //                        }
 //                    }
-//                })
-//        }
-
-
-
-        override fun onItemClicked(ingredientName: String) {
-            getIngredientDetails(ingredientName)
-
-            viewViewModel.ingredientDetails?.observe(viewLifecycleOwner, Observer{
-                with(it){
-                    // Get the name of the ingredient
-                    if(it!= null) {
-                        if(it[0].strDescription!=null) {
-                            if (it[0].strDescription?.isNotEmpty() == true) {
-                                // Make sure returned details match the the name of the ingredient we've clicked on
-                                if (ingredientName.equals(it[0].strIngredient, ignoreCase = true)) {
-                                    it[0].strDescription?.let { it1 ->
-                                        navigateToNextPage(ingredientName,
-                                            it1
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            })
+//                }
+//            })
+            navigateToNextPage(ingredientName,
+                ingredientDescription
+            )
         }
+
+
     }

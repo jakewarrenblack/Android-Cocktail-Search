@@ -52,6 +52,8 @@ class IngredientsFragment : Fragment() {
             spinner.visibility = View.GONE
         }
 
+
+
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
