@@ -206,11 +206,37 @@ class ViewFragment : Fragment(),
             return binding.root
         }
 
+        // If I don't do this, the api call isn't made when we return to this page from the ingredients detail page,
+        // seems stupid, but it works
         override fun onResume() {
             super.onResume()
-            viewViewModel.fetchData(ingredients)
-        }
+            if(ingredientItems != null && currentFavouriteItem != null){
+                spinner.visibility = View.VISIBLE;
 
+            } else{
+                spinner.visibility = View.GONE;
+                binding.favouriteButton.visibility = View.VISIBLE;
+                if (currentFavouriteItem == null) {
+                    binding.favouriteButton.text = "Not saved"
+                } else {
+                    binding.favouriteButton.text = "Saved!"
+                }
+
+                if (ingredientItems != null) {
+                    ingredientsWithDescriptions = ingredientItems
+                }
+                adapter = IngredientsListAdapter(ingredients, ingredientsWithDescriptions,this@ViewFragment)
+
+//                        adapter = args.cocktail.ingredients?.let {
+//                            ingredientsWithDescriptions?.let { it1 ->
+//                                IngredientsListAdapter(it, it1, this@ViewFragment)
+//                            }
+//                        }!!
+                binding.ingredientsRecyclerView.adapter = adapter
+                binding.ingredientsRecyclerView.layoutManager =
+                    LinearLayoutManager(activity)
+            }
+        }
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
             return when (item.itemId) {
                 android.R.id.home -> saveAndReturn()
@@ -307,9 +333,11 @@ class ViewFragment : Fragment(),
 
         override fun onItemClicked(ingredientName: String, ingredientDescription: String) {
             getIngredientDetails(ingredientName)
-            navigateToNextPage(ingredientName,
-                ingredientDescription
-            )
+            if(ingredientDescription.isNotEmpty()){
+                navigateToNextPage(ingredientName,
+                    ingredientDescription
+                )
+            }
         }
 
 
