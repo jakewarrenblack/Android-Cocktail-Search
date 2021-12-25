@@ -107,22 +107,35 @@ class FavouritesFragment : Fragment(),
         // In the MainFragment we have an if statement to check if the cocktail is an existing favourite, but in this case we know it is, because we're looking at a list of FavouriteEntities
         Log.i("FavouriteExistence", "Removing favourite: ${favourite.id} ${ favourite.strDrink} / adapterfavourite: $adapterFavouriteId")
 
+
+
         // The order of these is important, if we removed the favourite and updated the adapter's data, the view at this position would be removed, and the app would crash on a null pointer exception
         if(binding.favouritesRecyclerView.childCount == position){
             // Doing this check to prevent a crash when we try to remove the last item in the list first
-            binding.favouritesRecyclerView.removeViewAt((position-1))
+            //binding.favouritesRecyclerView.removeViewAt((position-1))
+            favouriteItems?.remove(favourite)
+            viewModel.removeFavourite(favourite)
+
+            // NotifyItemRemoved here is important in combination with binding.favouritesRecylerView.removeViewAt(position)
+            // We remove the data and tell the adapter and recyclerview where in their lists we've removed some data
+            // The UI will then update very nicely (slides out)
+            adapter.notifyItemRemoved(position);
+            //adapter.notifyDataSetChanged()
         }
         else {
-            binding.favouritesRecyclerView.removeViewAt(position)
+            //adapter.notifyDataSetChanged()
+            //binding.favouritesRecyclerView.removeViewAt(position)
+            favouriteItems?.remove(favourite)
+            viewModel.removeFavourite(favourite)
+
+            // NotifyItemRemoved here is important in combination with binding.favouritesRecylerView.removeViewAt(position)
+            // We remove the data and tell the adapter and recyclerview where in their lists we've removed some data
+            // The UI will then update very nicely (slides out)
+            adapter.notifyItemRemoved(position);
         }
 
-        favouriteItems?.remove(favourite)
-        viewModel.removeFavourite(favourite)
 
-        // NotifyItemRemoved here is important in combination with binding.favouritesRecylerView.removeViewAt(position)
-        // We remove the data and tell the adapter and recyclerview where in their lists we've removed some data
-        // The UI will then update very nicely (slides out)
-        adapter.notifyItemRemoved(position);
+
 
         // Update the UI if we've just the unsaved the only favourite, needs this check or nothing will happen in this case
         if(favouriteItems?.isEmpty() == true){
