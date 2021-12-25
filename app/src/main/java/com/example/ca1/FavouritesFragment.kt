@@ -108,7 +108,13 @@ class FavouritesFragment : Fragment(),
         Log.i("FavouriteExistence", "Removing favourite: ${favourite.id} ${ favourite.strDrink} / adapterfavourite: $adapterFavouriteId")
 
         // The order of these is important, if we removed the favourite and updated the adapter's data, the view at this position would be removed, and the app would crash on a null pointer exception
-        binding.favouritesRecyclerView.removeViewAt(position)
+        if(binding.favouritesRecyclerView.childCount == position){
+            // Doing this check to prevent a crash when we try to remove the last item in the list first
+            binding.favouritesRecyclerView.removeViewAt((position-1))
+        }
+        else {
+            binding.favouritesRecyclerView.removeViewAt(position)
+        }
 
         favouriteItems?.remove(favourite)
         viewModel.removeFavourite(favourite)
