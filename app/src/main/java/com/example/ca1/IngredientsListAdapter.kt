@@ -1,10 +1,12 @@
 package com.example.ca1
 
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.example.ca1.databinding.IngredientListItemBinding
 import com.example.ca1.model.Ingredient
 import com.squareup.picasso.Picasso
@@ -30,6 +32,14 @@ class IngredientsListAdapter (
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val list = ingredients.toList()
 
+        // Show a spinning progress indicator when loading images
+        val circularProgressDrawable = CircularProgressDrawable(holder.itemView.context)
+        circularProgressDrawable.apply {
+            strokeWidth = 5f
+            centerRadius = 30f
+            start()
+        }
+
         val ingredient = list.get(holder.adapterPosition)
         // this 'with' block means we can refer to lots of stuff inside the binding
         with(holder.binding) {
@@ -48,6 +58,7 @@ class IngredientsListAdapter (
                         // Picasso handles errors for us by adding a placeholder
                         Picasso.get()
                             .load("https://www.thecocktaildb.com/images/ingredients/${ingredientText.text}.png")
+                            .placeholder(circularProgressDrawable)
                             .error(R.drawable.ic_launcher_background).resize(50, 50).centerInside()
                             .into(imageView2);
 

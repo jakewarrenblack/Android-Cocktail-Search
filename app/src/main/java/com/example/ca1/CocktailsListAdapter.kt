@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.example.ca1.databinding.ListItemBinding
 import com.example.ca1.model.Cocktail
 // we use this library for parsing images
@@ -64,10 +65,18 @@ class CocktailsListAdapter(
        val myCustomFont : Typeface? = ResourcesCompat.getFont(context, R.font.comfortaa)
         holder.binding.cocktailText.typeface = myCustomFont
 
+        val circularProgressDrawable = CircularProgressDrawable(holder.itemView.context)
+        circularProgressDrawable.apply {
+            strokeWidth = 5f
+            centerRadius = 30f
+            start()
+        }
+
         // this 'with' block means we can refer to lots of stuff inside the binding
         with(holder.binding) {
             if (cocktail != null) {
-                Glide.with(root).load(cocktail.strDrinkThumb).centerCrop().into(imageView)
+                // Show a spinning progress indicator when loading images
+                Glide.with(root).load(cocktail.strDrinkThumb).placeholder(circularProgressDrawable).centerCrop().into(imageView)
             }
             if (cocktail != null) {
                 cocktailText.text = cocktail.strDrink

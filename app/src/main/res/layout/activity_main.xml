@@ -22,6 +22,7 @@
         app:navGraph="@navigation/nav_graph" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:background="@color/white"
         android:id="@+id/bottomNavigationView"
         app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
         android:layout_width="match_parent"
